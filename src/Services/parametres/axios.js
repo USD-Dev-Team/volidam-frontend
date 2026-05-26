@@ -10,12 +10,9 @@ export const BASE_URL = "https://api.usdsoft.uz/volidam/api/v1";
 
 export const $api = axios.create({
     baseURL: `${BASE_URL}`,
-    // headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json" },
 });
 
-/* ============================
-   REQUEST INTERCEPTOR
-=============================== */
 $api.interceptors.request.use(
     (config) => {
         const token = Cookies.get("token");
