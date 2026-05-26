@@ -8,6 +8,17 @@ import {
 } from "@chakra-ui/react";
 import { EditIcon, DeleteIcon, AddIcon, LockIcon } from "@chakra-ui/icons";
 import { apiUsers } from "../../Services/api/Users";
+import {
+    dataTableContainerProps,
+    dataTableHeadRowProps,
+    dataTableRowHoverProps,
+    volidamPrimaryButton,
+    volidamGhostButton,
+    volidamEditIconButton,
+    volidamLockIconButton,
+    volidamDeleteIconButton,
+    volidamModalCloseButton,
+} from "../../components/ui/volidamUi";
 
 const emptyForm = {
     full_name: "",
@@ -102,7 +113,7 @@ export default function Admins() {
     const roleColor = (role) => {
         switch (role) {
             case "admin": return "red";
-            case "manager": return "blue";
+            case "manager": return "pink";
             default: return "gray";
         }
     };
@@ -111,7 +122,7 @@ export default function Admins() {
         <Box p={6}>
             <HStack justify="space-between" mb={4}>
                 <Heading size="lg" color="text">Adminlar</Heading>
-                <Button leftIcon={<AddIcon />} colorScheme="teal" onClick={handleOpenAdd}>
+                <Button leftIcon={<AddIcon />} {...volidamPrimaryButton} onClick={handleOpenAdd}>
                     Yaratish
                 </Button>
             </HStack>
@@ -119,9 +130,9 @@ export default function Admins() {
             {loading ? (
                 <Center py={10}><Spinner size="xl" /></Center>
             ) : (
-                <Box overflowX="auto" borderRadius="md" border="1px solid" borderColor="gray.200">
+                <Box {...dataTableContainerProps}>
                     <Table variant="simple" size="md">
-                        <Thead bg="gray.50">
+                        <Thead {...dataTableHeadRowProps}>
                             <Tr>
                                 <Th>#</Th>
                                 <Th>To'liq ism</Th>
@@ -134,15 +145,15 @@ export default function Admins() {
                             {users.length === 0 ? (
                                 <Tr>
                                     <Td colSpan={5}>
-                                        <Center py={6}><Text color="gray.400">Ma'lumot yo'q</Text></Center>
+                                        <Center py={6}><Text color="textSecondary">Ma'lumot yo'q</Text></Center>
                                     </Td>
                                 </Tr>
                             ) : (
                                 users.map((user, index) => (
-                                    <Tr key={user.id} _hover={{ bg: "gray.50" }}>
+                                    <Tr key={user.id} {...dataTableRowHoverProps}>
                                         <Td>{index + 1}</Td>
                                         <Td fontWeight="500">{user.full_name}</Td>
-                                        <Td color="gray.600">{user.username}</Td>
+                                        <Td color="textSecondary">{user.username}</Td>
                                         <Td>
                                             <Badge colorScheme={roleColor(user.role)}>
                                                 {user.role}
@@ -151,18 +162,14 @@ export default function Admins() {
                                         <Td>
                                             <HStack spacing={2}>
                                                 <IconButton
-                                                    size="sm"
+                                                    {...volidamEditIconButton}
                                                     icon={<EditIcon />}
-                                                    colorScheme="blue"
-                                                    variant="ghost"
                                                     aria-label="Tahrirlash"
                                                     onClick={() => handleOpenEdit(user)}
                                                 />
                                                 <IconButton
-                                                    size="sm"
+                                                    {...volidamLockIconButton}
                                                     icon={<LockIcon />}
-                                                    colorScheme="orange"
-                                                    variant="ghost"
                                                     aria-label="Parolni tiklash"
                                                     onClick={() => {
                                                         setResetId(user.id);
@@ -170,10 +177,8 @@ export default function Admins() {
                                                     }}
                                                 />
                                                 <IconButton
-                                                    size="sm"
+                                                    {...volidamDeleteIconButton}
                                                     icon={<DeleteIcon />}
-                                                    colorScheme="red"
-                                                    variant="ghost"
                                                     aria-label="O'chirish"
                                                     onClick={() => {
                                                         setDeleteId(user.id);
@@ -195,7 +200,7 @@ export default function Admins() {
                 <ModalOverlay />
                 <ModalContent>
                     <ModalHeader>{editId ? "Adminni tahrirlash" : "Admin qo'shish"}</ModalHeader>
-                    <ModalCloseButton />
+                    <ModalCloseButton {...volidamModalCloseButton} />
                    <ModalBody display="flex" flexDirection="column" gap={3}>
     <FormControl>
         <FormLabel>To'liq ism</FormLabel>
@@ -226,8 +231,8 @@ export default function Admins() {
     )}
 </ModalBody>
                     <ModalFooter gap={2}>
-                        <Button variant="ghost" onClick={onFormClose}>Bekor qilish</Button>
-                        <Button colorScheme="teal" onClick={handleSubmit}>
+                        <Button {...volidamGhostButton} onClick={onFormClose}>Bekor qilish</Button>
+                        <Button {...volidamPrimaryButton} onClick={handleSubmit}>
                             {editId ? "Saqlash" : "Qo'shish"}
                         </Button>
                     </ModalFooter>
@@ -239,7 +244,7 @@ export default function Admins() {
                 <ModalOverlay />
                 <ModalContent>
                     <ModalHeader>O'chirishni tasdiqlang</ModalHeader>
-                    <ModalCloseButton />
+                    <ModalCloseButton {...volidamModalCloseButton} />
                     <ModalBody>
                         <Text>Haqiqatan ham bu foydalanuvchini o'chirmoqchimisiz?</Text>
                     </ModalBody>
@@ -255,7 +260,7 @@ export default function Admins() {
                 <ModalOverlay />
                 <ModalContent>
                     <ModalHeader>Parolni tiklash</ModalHeader>
-                    <ModalCloseButton />
+                    <ModalCloseButton {...volidamModalCloseButton} />
                     <ModalBody>
                         <FormControl>
                             <FormLabel>Yangi parol</FormLabel>

@@ -30,6 +30,17 @@ import {
 } from "@chakra-ui/react";
 import { EditIcon, DeleteIcon, AddIcon, LockIcon } from "@chakra-ui/icons";
 import { apiUsers } from "../../Services/api/Users";
+import {
+  dataTableContainerProps,
+  dataTableHeadRowProps,
+  dataTableRowHoverProps,
+  volidamPrimaryButton,
+  volidamGhostButton,
+  volidamEditIconButton,
+  volidamLockIconButton,
+  volidamDeleteIconButton,
+  volidamModalCloseButton,
+} from "../../components/ui/volidamUi";
 
 const emptyForm = {
   full_name: "",
@@ -141,7 +152,7 @@ export default function Operators() {
         </Heading>
         <Button
           leftIcon={<AddIcon />}
-          colorScheme="teal"
+          {...volidamPrimaryButton}
           onClick={handleOpenAdd}
         >
           Yaratish
@@ -153,14 +164,9 @@ export default function Operators() {
           <Spinner size="xl" />
         </Center>
       ) : (
-        <Box
-          overflowX="auto"
-          borderRadius="md"
-          border="1px solid"
-          borderColor="gray.200"
-        >
+        <Box {...dataTableContainerProps}>
           <Table variant="simple" size="md">
-            <Thead bg="gray.50">
+            <Thead {...dataTableHeadRowProps}>
               <Tr>
                 <Th>#</Th>
                 <Th>To'liq ism</Th>
@@ -173,31 +179,27 @@ export default function Operators() {
                 <Tr>
                   <Td colSpan={4}>
                     <Center py={6}>
-                      <Text color="gray.400">Ma'lumot yo'q</Text>
+                      <Text color="textSecondary">Ma'lumot yo'q</Text>
                     </Center>
                   </Td>
                 </Tr>
               ) : (
                users.map((user, index) => (
-  <Tr key={user.id} _hover={{ bg: "gray.50" }}>
+  <Tr key={user.id} {...dataTableRowHoverProps}>
     <Td>{index + 1}</Td>
     <Td fontWeight="500">{user.full_name}</Td>
-    <Td color="gray.600">{user.username}</Td>
+    <Td color="textSecondary">{user.username}</Td>
     <Td>
       <HStack spacing={2}>
         <IconButton
-          size="sm"
+          {...volidamEditIconButton}
           icon={<EditIcon />}
-          colorScheme="blue"
-          variant="ghost"
           aria-label="Tahrirlash"
           onClick={() => handleOpenEdit(user)}
         />
         <IconButton
-          size="sm"
+          {...volidamLockIconButton}
           icon={<LockIcon />}
-          colorScheme="orange"
-          variant="ghost"
           aria-label="Parolni tiklash"
           onClick={() => {
             setResetId(user.id);
@@ -205,10 +207,8 @@ export default function Operators() {
           }}
         />
         <IconButton
-          size="sm"
+          {...volidamDeleteIconButton}
           icon={<DeleteIcon />}
-          colorScheme="red"
-          variant="ghost"
           aria-label="O'chirish"
           onClick={() => {
             setDeleteId(user.id);
@@ -232,7 +232,7 @@ export default function Operators() {
           <ModalHeader>
             {editId ? "Operatorni tahrirlash" : "Operator qo'shish"}
           </ModalHeader>
-          <ModalCloseButton />
+          <ModalCloseButton {...volidamModalCloseButton} />
           <ModalBody display="flex" flexDirection="column" gap={3}>
             <FormControl>
               <FormLabel>To'liq ism</FormLabel>
@@ -269,10 +269,10 @@ export default function Operators() {
             )}
           </ModalBody>
           <ModalFooter gap={2}>
-            <Button variant="ghost" onClick={onFormClose}>
+            <Button {...volidamGhostButton} onClick={onFormClose}>
               Bekor qilish
             </Button>
-            <Button colorScheme="teal" onClick={handleSubmit}>
+            <Button {...volidamPrimaryButton} onClick={handleSubmit}>
               {editId ? "Saqlash" : "Qo'shish"}
             </Button>
           </ModalFooter>
@@ -284,7 +284,7 @@ export default function Operators() {
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>O'chirishni tasdiqlang</ModalHeader>
-          <ModalCloseButton />
+          <ModalCloseButton {...volidamModalCloseButton} />
           <ModalBody>
             <Text>Haqiqatan ham bu operatorni o'chirmoqchimisiz?</Text>
           </ModalBody>
@@ -304,7 +304,7 @@ export default function Operators() {
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Parolni tiklash</ModalHeader>
-          <ModalCloseButton />
+          <ModalCloseButton {...volidamModalCloseButton} />
           <ModalBody>
             <FormControl>
               <FormLabel>Yangi parol</FormLabel>

@@ -10,7 +10,7 @@ import {
     useColorModeValue,
 } from "@chakra-ui/react";
 import { Search } from "lucide-react";
-import { filterFieldProps } from "./leadStyles";
+import { filterFieldProps, searchFieldProps } from "./leadStyles";
 
 export default function LeadsFilters({
     statuses,
@@ -19,21 +19,24 @@ export default function LeadsFilters({
     search,
     onSearchChange,
 }) {
-    const labelColor = useColorModeValue("gray.700", "gray.300");
+    const labelColor = useColorModeValue("textSecondary", "gray.300");
+    const iconColor = useColorModeValue("brand.400", "gray.400");
 
     return (
         <Flex
-            gap={4}
+            gap={3}
             mb={4}
             flexWrap="wrap"
             align={{ base: "stretch", md: "flex-end" }}
         >
-            <FormControl maxW={{ base: "full", md: "220px" }}>
-                <FormLabel fontSize="sm" color={labelColor} mb={1}>
+            <FormControl maxW={{ base: "full", md: "200px" }} flex="0 0 auto">
+                <FormLabel fontSize="xs" color={labelColor} mb={1} fontWeight="600">
                     Status
                 </FormLabel>
                 <Select
                     {...filterFieldProps}
+                    size="sm"
+                    h="36px"
                     value={statusId}
                     onChange={(e) => onStatusIdChange(e.target.value)}
                 >
@@ -46,18 +49,18 @@ export default function LeadsFilters({
                 </Select>
             </FormControl>
 
-            <FormControl flex={1} minW={{ base: "full", md: "280px" }}>
-                <FormLabel fontSize="sm" color={labelColor} mb={1}>
+            <FormControl w={{ base: "full", md: "200px" }} flex="0 0 auto">
+                <FormLabel fontSize="xs" color={labelColor} mb={1} fontWeight="600">
                     Qidiruv
                 </FormLabel>
-                <InputGroup>
-                    <InputLeftElement pointerEvents="none" h="full">
-                        <Icon as={Search} color="gray.400" boxSize={4} />
+                <InputGroup size="sm">
+                    <InputLeftElement pointerEvents="none" h="36px">
+                        <Icon as={Search} color={iconColor} boxSize={3.5} />
                     </InputLeftElement>
                     <Input
-                        {...filterFieldProps}
-                        pl={10}
-                        placeholder="FIO, telefon yoki yaratuvchi..."
+                        {...searchFieldProps}
+                        pl={8}
+                        placeholder="FIO, telefon..."
                         value={search}
                         onChange={(e) => onSearchChange(e.target.value)}
                     />

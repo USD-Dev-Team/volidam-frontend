@@ -1,4 +1,4 @@
-import { Skeleton, Stack, Td, Tr } from "@chakra-ui/react";
+import { Skeleton, Td, Tr, useColorModeValue } from "@chakra-ui/react";
 
 export default function TableSkeleton({
     rows = 5,
@@ -9,6 +9,9 @@ export default function TableSkeleton({
     columnWidths = [],
     isZebra = false,
 }) {
+    const zebraBg = useColorModeValue("neutral.50", "whiteAlpha.50");
+    const borderColor = useColorModeValue("gray.200", "whiteAlpha.200");
+
     return (
         <>
             {Array(rows)
@@ -16,7 +19,7 @@ export default function TableSkeleton({
                 .map((_, rowIndex) => (
                     <Tr
                         key={rowIndex}
-                        bg={isZebra && rowIndex % 2 === 0 ? "gray.50" : "transparent"}
+                        bg={isZebra && rowIndex % 2 === 0 ? zebraBg : "transparent"}
                     >
                         {Array(columns)
                             .fill(0)
@@ -24,7 +27,7 @@ export default function TableSkeleton({
                                 <Td
                                     key={colIndex}
                                     borderBottom={withBorder ? "1px solid" : "none"}
-                                    borderColor="gray.200"
+                                    borderColor={borderColor}
                                 >
                                     <Skeleton
                                         height={rowHeight}

@@ -64,7 +64,7 @@ export default function Login() {
                 });
 
                 if (isSuperAdmin(data.user.role)) {
-                    navigate("/superadmin");
+                    navigate("/superadmin/leads");
                     toastService.success("Xush kelibsiz, Super Admin!");
                 } else if (isAdmin(data.user.role)) {
                     navigate("/admin/leads");

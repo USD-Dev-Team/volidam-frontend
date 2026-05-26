@@ -20,7 +20,7 @@ export default function AdminHome() {
                     py={6}
                     flexDirection="column"
                     gap={2}
-                    colorScheme="blue"
+                    colorScheme="pink"
                     variant="outline"
                     bg="white"
                 >

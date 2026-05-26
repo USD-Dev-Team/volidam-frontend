@@ -41,7 +41,6 @@ export default function EditTaskStatusModal({
     const toast = useToast();
     const borderCol = useColorModeValue("gray.200", "whiteAlpha.200");
     const headerBorder = useColorModeValue("gray.200", "whiteAlpha.200");
-    const footerBg = useColorModeValue("gray.50", "whiteAlpha.50");
     const heroBg = useColorModeValue(
         "linear-gradient(135deg, #eff6ff 0%, #e0e7ff 50%, #ddd6fe 100%)",
         "linear-gradient(135deg, rgba(59,130,246,0.18) 0%, rgba(99,102,241,0.22) 100%)"
@@ -200,7 +199,6 @@ export default function EditTaskStatusModal({
                 </ModalBody>
 
                 <ModalFooter
-                    bg={footerBg}
                     borderTopWidth="1px"
                     borderColor={headerBorder}
                     gap={3}
@@ -209,7 +207,7 @@ export default function EditTaskStatusModal({
                         Bekor qilish
                     </Button>
                     <Button
-                        colorScheme="blue"
+                        colorScheme="pink"
                         onClick={submit}
                         isLoading={submitting}
                         borderRadius="xl"

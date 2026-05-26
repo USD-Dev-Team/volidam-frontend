@@ -92,7 +92,7 @@ export default function CreateLocationStatusModal({
                         Bekor qilish
                     </Button>
                     <Button
-                        colorScheme="blue"
+                        colorScheme="pink"
                         onClick={submit}
                         isLoading={submitting}
                         borderRadius="xl"

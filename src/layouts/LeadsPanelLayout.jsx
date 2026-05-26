@@ -7,7 +7,15 @@ export default function LeadsPanelLayout() {
     return (
         <Box h="100vh" bg="bg" display="flex" flexDirection="column" overflow="hidden">
             <LeadsPanelHeader />
-            <Box as="main" flex="1" minH={0} overflow="hidden">
+            <Box
+                as="main"
+                flex="1"
+                minH={0}
+                minW={0}
+                overflow="hidden"
+                display="flex"
+                flexDirection="column"
+            >
                 <Outlet />
             </Box>
         </Box>

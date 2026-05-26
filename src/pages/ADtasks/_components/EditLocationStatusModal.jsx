@@ -89,7 +89,7 @@ export default function EditLocationStatusModal({
                         Bekor qilish
                     </Button>
                     <Button
-                        colorScheme="blue"
+                        colorScheme="pink"
                         onClick={submit}
                         isLoading={submitting}
                         borderRadius="xl"

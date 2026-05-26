@@ -71,7 +71,6 @@ export default function KanbanColumn({
     loading,
     colLayout,
     onOpenLid,
-    onEditLid,
     onDeleteLid,
     onDropLid,
     onEditStatus,
@@ -83,8 +82,8 @@ export default function KanbanColumn({
 }) {
     const bg = useColorModeValue("gray.50", "whiteAlpha.50");
     const border = useColorModeValue("gray.200", "whiteAlpha.200");
-    const activeBg = useColorModeValue("blue.50", "whiteAlpha.100");
-    const activeBorder = useColorModeValue("blue.300", "blue.400");
+    const activeBg = useColorModeValue("brand.50", "whiteAlpha.100");
+    const activeBorder = useColorModeValue("brand.300", "brand.400");
     const emptyBorder = useColorModeValue("gray.200", "gray.600");
     const emptyText = useColorModeValue("gray.500", "gray.400");
     const bannerActionHover = useColorModeValue("blackAlpha.100", "whiteAlpha.200");
@@ -201,7 +200,6 @@ export default function KanbanColumn({
                                 key={lid.id}
                                 lid={{ ...lid, status_id: lid.status_id || status.id }}
                                 onOpen={onOpenLid}
-                                onEdit={onEditLid}
                                 onDelete={onDeleteLid}
                             />
                         ))}

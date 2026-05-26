@@ -9,6 +9,7 @@ import {
     useColorModeValue,
 } from "@chakra-ui/react";
 import AdTasksModalShell from "./AdTasksModalShell";
+import { volidamPrimaryButton } from "../../../components/ui/volidamUi";
 
 /** Status o‘zgarishi — izoh chatga, keyin PUT /locations/{id}/status */
 export default function LocationStatusNoteModal({
@@ -56,12 +57,11 @@ export default function LocationStatusNoteModal({
                         Bekor qilish
                     </Button>
                     <Button
-                        colorScheme={isCancel ? "red" : "blue"}
+                        {...(isCancel ? { colorScheme: "red", borderRadius: "full", fontWeight: "600" } : volidamPrimaryButton)}
                         onClick={submit}
                         isLoading={isSubmitting}
                         loadingText="Saqlanmoqda..."
                         isDisabled={!String(note ?? "").trim()}
-                        borderRadius="xl"
                     >
                         {isCancel ? "Statusni yangilash" : "Saqlash"}
                     </Button>

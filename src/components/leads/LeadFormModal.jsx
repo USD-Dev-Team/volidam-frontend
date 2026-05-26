@@ -7,8 +7,13 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import AdTasksModalShell from "../../pages/ADtasks/_components/AdTasksModalShell";
-import { filterFieldProps } from "./leadStyles";
+import VolidamModalShell from "../ui/VolidamModalShell";
+import {
+    filterFieldProps,
+    volidamFormLabel,
+    volidamGhostButton,
+    volidamPrimaryButton,
+} from "./leadStyles";
 
 const empty = { fio: "", telefon_raqam: "" };
 
@@ -59,19 +64,22 @@ export default function LeadFormModal({
     const isEdit = mode === "edit";
 
     return (
-        <AdTasksModalShell
+        <VolidamModalShell
             isOpen={isOpen}
             onClose={onClose}
             title={isEdit ? "Lidni tahrirlash" : "Yangi lid"}
-            subtitle={isEdit ? "FIO va telefonni yangilang" : "FIO va telefon raqamini kiriting"}
+            subtitle={
+                isEdit
+                    ? "FIO va telefonni yangilang"
+                    : "FIO va telefon raqamini kiriting"
+            }
             footer={
                 <>
-                    <Button variant="ghost" onClick={onClose} isDisabled={loading}>
+                    <Button {...volidamGhostButton} onClick={onClose} isDisabled={loading}>
                         Bekor qilish
                     </Button>
                     <Button
-                        colorScheme="blue"
-                        borderRadius="xl"
+                        {...volidamPrimaryButton}
                         isLoading={loading}
                         loadingText="Saqlanmoqda..."
                         onClick={handleSubmit}
@@ -82,9 +90,9 @@ export default function LeadFormModal({
             }
         >
             <form onSubmit={handleSubmit}>
-                <VStack spacing={4} align="stretch">
+                <VStack spacing={5} align="stretch">
                     <FormControl isInvalid={!!errors.fio}>
-                        <FormLabel fontSize="sm">FIO</FormLabel>
+                        <FormLabel {...volidamFormLabel}>FIO</FormLabel>
                         <Input
                             {...filterFieldProps}
                             value={form.fio}
@@ -96,7 +104,7 @@ export default function LeadFormModal({
                         <FormErrorMessage>{errors.fio}</FormErrorMessage>
                     </FormControl>
                     <FormControl isInvalid={!!errors.telefon_raqam}>
-                        <FormLabel fontSize="sm">Telefon raqam</FormLabel>
+                        <FormLabel {...volidamFormLabel}>Telefon raqam</FormLabel>
                         <Input
                             {...filterFieldProps}
                             value={form.telefon_raqam}
@@ -112,6 +120,6 @@ export default function LeadFormModal({
                     </FormControl>
                 </VStack>
             </form>
-        </AdTasksModalShell>
+        </VolidamModalShell>
     );
 }

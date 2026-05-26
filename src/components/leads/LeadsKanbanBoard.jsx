@@ -17,7 +17,6 @@ export default function LeadsKanbanBoard({
     onDragLeaveStatus,
     onDropLid,
     onOpenLid,
-    onEditLid,
     onDeleteLid,
     onEditStatus,
     onDeleteStatus,
@@ -50,7 +49,7 @@ export default function LeadsKanbanBoard({
                     aria-label="O'ngga scroll"
                     icon={<ChevronRight size={22} />}
                     size="md"
-                    colorScheme="blue"
+                    colorScheme="pink"
                     borderRadius="xl"
                     position="absolute"
                     right={2}
@@ -117,7 +116,6 @@ export default function LeadsKanbanBoard({
                             onDragLeave={onDragLeaveStatus}
                             onDropLid={onDropLid}
                             onOpenLid={onOpenLid}
-                            onEditLid={onEditLid}
                             onDeleteLid={onDeleteLid}
                             onEditStatus={onEditStatus}
                             onDeleteStatus={onDeleteStatus}
