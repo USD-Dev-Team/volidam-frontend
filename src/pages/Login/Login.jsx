@@ -19,6 +19,7 @@ import { Auth } from "../../Services/api/Auth";
 import { useAuth } from "../../hooks/useAuth";
 import { toastService } from "../../utils/toast";
 import { useNavigate } from "react-router";
+import { isAdmin, isOperator, isSuperAdmin } from "../../utils/roles";
 
 export default function Login() {
     const { login } = useAuth();
@@ -62,12 +63,15 @@ export default function Login() {
                     user: data.user,
                 });
 
-                if (data.user.role === "SUPER_ADMIN") {
+                if (isSuperAdmin(data.user.role)) {
                     navigate("/superadmin");
-                    toastService.success("Xush kelibsiz, Boss!");
-                } else if (data.user.role === "ADMIN") {
-                    navigate("/");
-                    toastService.success("Muvaffaqiyatli kirdingiz!");
+                    toastService.success("Xush kelibsiz, Super Admin!");
+                } else if (isAdmin(data.user.role)) {
+                    navigate("/admin/leads");
+                    toastService.success("Muvaffaqiyatli kirdingiz, Admin!");
+                } else if (isOperator(data.user.role)) {
+                    navigate("/operator/leads");
+                    toastService.success("Muvaffaqiyatli kirdingiz, Operator!");
                 } else {
                     toastService.error("Role mos kelmadi");
                 }

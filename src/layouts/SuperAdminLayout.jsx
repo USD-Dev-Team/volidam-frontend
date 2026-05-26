@@ -20,6 +20,10 @@ export default function SuperAdminLayout() {
                 pl={collapsed ? "80px" : "250px"}
                 transition="0.25s ease"
                 minH="100vh"
+                minW={0}
+                w="100%"
+                maxW="100vw"
+                overflowX="hidden"
             >
                 <Outlet />
             </Box>

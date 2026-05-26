@@ -1,10 +1,35 @@
-import { Box, Heading, Text } from "@chakra-ui/react";
+import { useLocation } from "react-router-dom";
+import { useAuthStore } from "../../store/authStore";
+import LeadsBoard from "../../components/leads/LeadsBoard";
+import { isAdmin, isOperator, isSuperAdmin } from "../../utils/roles";
 
 export default function Leads() {
+    const user = useAuthStore((s) => s.user);
+    const role = user?.role;
+    const { pathname } = useLocation();
+
+    const panelLayout =
+        pathname.startsWith("/admin") || pathname.startsWith("/operator");
+
+    const scrollRoleScope = pathname.startsWith("/operator")
+        ? "operator"
+        : pathname.startsWith("/admin")
+          ? "admin"
+          : "superadmin";
+
+    const maxVisibleColumns = isSuperAdmin(role) ? 4 : 5;
+
     return (
-        <Box p={6}>
-            <Heading size="lg" mb={1} color="text">Lidlar</Heading>
-            <Text color="gray.500">Lidlar ro'yxati bu yerda bo'ladi.</Text>
-        </Box>
+        <LeadsBoard
+            title="Lidlar"
+            panelLayout={panelLayout}
+            scrollRoleScope={scrollRoleScope}
+            maxVisibleColumns={maxVisibleColumns}
+            canManageStatuses={isSuperAdmin(role)}
+            canManageColumns={isSuperAdmin(role)}
+            canCreateLid={
+                isSuperAdmin(role) || isAdmin(role) || isOperator(role)
+            }
+        />
     );
 }
