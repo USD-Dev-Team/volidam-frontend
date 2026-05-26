@@ -14,7 +14,7 @@ import { motion } from 'framer-motion';
 import { TriangleAlert, Home, RefreshCw } from "lucide-react";
 
 // Create motion-enabled Chakra components
-const MotionBox = motion(Box);
+const MotionBox = motion.create(Box);
 
 export default function ErrorPage({ status = 404, title, description, onRetry, onHome }) {
     const bg = useColorModeValue('gray.50', 'gray.900');

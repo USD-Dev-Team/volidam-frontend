@@ -4,9 +4,13 @@ import RequireAuth from "./auth/RequireAuth";
 import { Toaster } from "react-hot-toast";
 import ErrorPage from "./pages/ErrorPage";
 import SuperAdminLayout from "./layouts/SuperAdminLayout";
+import LeadsPanelLayout from "./layouts/LeadsPanelLayout";
 import superAdminRoutes from "./routes/superAdminRoutes";
 import Login from "./pages/Login/Login";
 import Register from "./pages/Register/Register";
+import Leads from "./pages/Leads/Leads";
+import LeadDetailPage from "./pages/Leads/LeadDetailPage";
+import { ROLES } from "./utils/roles";
 
 function App() {
     return (
@@ -17,7 +21,7 @@ function App() {
 
                 <Route path="/" element={<Navigate to="/login" replace />} />
 
-                <Route element={<RequireAuth role="super_admin" />}>
+                <Route element={<RequireAuth role={ROLES.SUPER_ADMIN} />}>
                     <Route path="/superadmin" element={<SuperAdminLayout />}>
                         {superAdminRoutes.map((r) => (
                             <Route
@@ -27,6 +31,22 @@ function App() {
                                 element={r.element}
                             />
                         ))}
+                    </Route>
+                </Route>
+
+                <Route element={<RequireAuth role={ROLES.ADMIN} />}>
+                    <Route path="/admin" element={<LeadsPanelLayout />}>
+                        <Route index element={<Navigate to="leads" replace />} />
+                        <Route path="leads" element={<Leads />} />
+                        <Route path="leads/:id" element={<LeadDetailPage />} />
+                    </Route>
+                </Route>
+
+                <Route element={<RequireAuth role={ROLES.OPERATOR} />}>
+                    <Route path="/operator" element={<LeadsPanelLayout />}>
+                        <Route index element={<Navigate to="leads" replace />} />
+                        <Route path="leads" element={<Leads />} />
+                        <Route path="leads/:id" element={<LeadDetailPage />} />
                     </Route>
                 </Route>
 

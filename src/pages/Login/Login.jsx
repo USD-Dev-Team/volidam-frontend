@@ -19,6 +19,7 @@ import { Auth } from "../../Services/api/Auth";
 import { useAuth } from "../../hooks/useAuth";
 import { toastService } from "../../utils/toast";
 import { useNavigate } from "react-router";
+import { isAdmin, isOperator, isSuperAdmin } from "../../utils/roles";
 
 export default function Login() {
     const { login } = useAuth();
@@ -54,29 +55,27 @@ export default function Login() {
                 password: passInput.current.value,
             });
 
-        if (res.status === 200 || res.status === 201) {
-    const data = res.data;
-    
-    console.log("===== FULL RESPONSE =====", data);
-    console.log("===== ROLE =====", data.user?.role);
-    console.log("===== TOKENS =====", data.tokens);
-    
-    login({
-        token: data.tokens.access_token,
-        refreshToken: data.tokens.refresh_token,
-        user: data.user,
-    });
+            if (res.status === 200 || res.status === 201) {
+                const data = res.data;
+                login({
+                    token: data.tokens.access_token,
+                    refreshToken: data.tokens.refresh_token,
+                    user: data.user,
+                });
 
-    if (data.user.role === "super_admin") {
-        navigate("/superadmin");
-        toastService.success("Xush kelibsiz, Boss!");
-    } else if (data.user.role === "ADMIN") {
-        navigate("/");
-        toastService.success("Muvaffaqiyatli kirdingiz!");
-    } else {
-        toastService.error("Role mos kelmadi");
-    }
-}
+                if (isSuperAdmin(data.user.role)) {
+                    navigate("/superadmin");
+                    toastService.success("Xush kelibsiz, Super Admin!");
+                } else if (isAdmin(data.user.role)) {
+                    navigate("/admin/leads");
+                    toastService.success("Muvaffaqiyatli kirdingiz, Admin!");
+                } else if (isOperator(data.user.role)) {
+                    navigate("/operator/leads");
+                    toastService.success("Muvaffaqiyatli kirdingiz, Operator!");
+                } else {
+                    toastService.error("Role mos kelmadi");
+                }
+            }
         } catch (err) {
             toastService.error(err?.response?.data?.message || "Tizim xatosi");
         } finally {
