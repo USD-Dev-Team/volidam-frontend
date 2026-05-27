@@ -24,6 +24,7 @@ import LeadsFilters from "./LeadsFilters";
 import ConfirmDelModal from "../common/ConfirmDelModal";
 import { toastService } from "../../utils/toast";
 import { getApiErrorMessage } from "../../utils/lidStatus";
+import { volidamOutlineButton, volidamPrimaryButton } from "./leadStyles";
 
 export default function LeadsBoard({
     canManageStatuses = false,
@@ -55,7 +56,6 @@ export default function LeadsBoard({
         moving,
         moveLid,
         createLid,
-        updateLid,
         deleteLid,
         createStatus,
         updateStatus,
@@ -74,18 +74,16 @@ export default function LeadsBoard({
 
     const [dragOverStatusId, setDragOverStatusId] = useState(null);
     const [actionLoading, setActionLoading] = useState(false);
-    const [editingLid, setEditingLid] = useState(null);
     const [statusFormMode, setStatusFormMode] = useState("create");
     const [selectedStatus, setSelectedStatus] = useState(null);
     const [deleteLidTarget, setDeleteLidTarget] = useState(null);
     const [deleteStatusTarget, setDeleteStatusTarget] = useState(null);
 
     const createModal = useDisclosure();
-    const editModal = useDisclosure();
     const statusFormModal = useDisclosure();
 
     const subtleText = useColorModeValue("gray.600", "gray.400");
-    const totalAccent = useColorModeValue("blue.600", "blue.300");
+    const totalAccent = useColorModeValue("brand.600", "brand.300");
 
     const nextStatusOrder = useMemo(() => {
         if (!allStatuses.length) return 0;
@@ -134,20 +132,6 @@ export default function LeadsBoard({
             createModal.onClose();
         } catch (err) {
             toastService.error(getApiErrorMessage(err) || "Lid yaratilmadi");
-        } finally {
-            setActionLoading(false);
-        }
-    };
-
-    const handleEditLid = async (data) => {
-        if (!editingLid?.id) return;
-        setActionLoading(true);
-        try {
-            await updateLid(editingLid.id, data);
-            editModal.onClose();
-            setEditingLid(null);
-        } catch (err) {
-            toastService.error(getApiErrorMessage(err) || "Saqlanmadi");
         } finally {
             setActionLoading(false);
         }
@@ -225,9 +209,7 @@ export default function LeadsBoard({
                 <HStack spacing={2} flexWrap="wrap" justify={{ base: "flex-start", md: "flex-end" }}>
                     {canManageStatuses && (
                         <Button
-                            size="md"
-                            variant="outline"
-                            borderRadius="lg"
+                            {...volidamOutlineButton}
                             leftIcon={<ListPlus size={16} />}
                             onClick={openCreateStatus}
                         >
@@ -236,9 +218,7 @@ export default function LeadsBoard({
                     )}
                     {canCreateLid && (
                         <Button
-                            size="md"
-                            colorScheme="blue"
-                            borderRadius="lg"
+                            {...volidamPrimaryButton}
                             leftIcon={<Plus size={16} />}
                             onClick={createModal.onOpen}
                         >
@@ -281,7 +261,7 @@ export default function LeadsBoard({
 
             {loading && allStatuses.length === 0 ? (
                 <Flex justify="center" py={20}>
-                    <Spinner size="lg" color="blue.400" thickness="3px" />
+                    <Spinner size="lg" color="brand.500" thickness="3px" />
                 </Flex>
             ) : statuses.length === 0 ? (
                 <Text color="gray.500" textAlign="center" py={12}>
@@ -303,10 +283,6 @@ export default function LeadsBoard({
                     onDropLid={handleDrop}
                     onOpenLid={(lid) => {
                         navigate(getLeadDetailPath(leadsBasePath, lid.id));
-                    }}
-                    onEditLid={(lid) => {
-                        setEditingLid(lid);
-                        editModal.onOpen();
                     }}
                     onDeleteLid={requestDeleteLid}
                     onEditStatus={(s) => {
@@ -340,17 +316,6 @@ export default function LeadsBoard({
                 onSubmit={handleCreateLid}
                 loading={actionLoading}
                 mode="create"
-            />
-            <LeadFormModal
-                isOpen={editModal.isOpen}
-                onClose={() => {
-                    editModal.onClose();
-                    setEditingLid(null);
-                }}
-                onSubmit={handleEditLid}
-                loading={actionLoading}
-                mode="edit"
-                initialData={editingLid}
             />
             <ConfirmDelModal
                 isOpen={Boolean(deleteLidTarget)}
@@ -390,8 +355,12 @@ export default function LeadsBoard({
         return (
             <Box
                 ref={scroll.mainScrollRef}
-                h="100%"
+                flex="1"
+                minH={0}
                 overflowY="auto"
+                overflowX="hidden"
+                w="100%"
+                minW={0}
                 px={{ base: 4, md: 5 }}
                 py={4}
                 pb={8}

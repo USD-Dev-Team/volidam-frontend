@@ -1,6 +1,5 @@
-import { Box, Text } from "@chakra-ui/react";
+import { Box, Text, useColorModeValue } from "@chakra-ui/react";
 
-/** Detail sahifadagi bo‘lim — tema tokenlari (light/dark) */
 export default function LeadDetailSection({
     title,
     subtitle,
@@ -8,21 +7,32 @@ export default function LeadDetailSection({
     action = null,
     noPadding = false,
 }) {
+    const headerBg = useColorModeValue(
+        "linear-gradient(180deg, rgba(252, 228, 236, 0.5) 0%, transparent 100%)",
+        "transparent"
+    );
+    const sectionShadow = useColorModeValue(
+        "0 4px 24px rgba(233, 30, 99, 0.08)",
+        "sm"
+    );
+
     return (
         <Box
             w="100%"
-            borderRadius={{ base: "xl", md: "2xl" }}
+            borderRadius="2xl"
             borderWidth="1px"
             borderColor="border"
             bg="surface"
             overflow="hidden"
+            boxShadow={sectionShadow}
         >
             {title ? (
                 <Box
-                    px={{ base: 3, md: 5 }}
-                    py={{ base: 3, md: 4 }}
+                    px={{ base: 4, md: 6 }}
+                    py={{ base: 4, md: 5 }}
                     borderBottomWidth="1px"
                     borderColor="border"
+                    bgImage={headerBg}
                     display="flex"
                     justifyContent="space-between"
                     alignItems="flex-start"
@@ -30,11 +40,16 @@ export default function LeadDetailSection({
                     flexWrap="wrap"
                 >
                     <Box minW={0} flex={1}>
-                        <Text fontWeight="700" fontSize={{ base: "sm", md: "md" }} color="text">
+                        <Text
+                            fontWeight="700"
+                            fontSize={{ base: "md", md: "lg" }}
+                            color="text"
+                            letterSpacing="-0.01em"
+                        >
                             {title}
                         </Text>
                         {subtitle ? (
-                            <Text fontSize="sm" color="textSecondary" mt={0.5}>
+                            <Text fontSize="sm" color="textSecondary" mt={1} lineHeight="short">
                                 {subtitle}
                             </Text>
                         ) : null}
@@ -42,7 +57,7 @@ export default function LeadDetailSection({
                     {action}
                 </Box>
             ) : null}
-            <Box p={noPadding ? 0 : { base: 3, md: 5 }}>{children}</Box>
+            <Box p={noPadding ? 0 : { base: 4, md: 6 }}>{children}</Box>
         </Box>
     );
 }

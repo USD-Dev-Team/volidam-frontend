@@ -1,5 +1,3 @@
-import { border } from "@chakra-ui/react";
-
 const Select = {
   parts: ["field", "icon"],
 
@@ -38,9 +36,9 @@ const Select = {
         _hover: {
           borderColor: "neutral.400",
         },
-        _focus: {
-          borderColor: "brand.400",
-          boxShadow: "0 0 0 1px var(--chakra-colors-brand-400)",
+        _focusVisible: {
+          borderColor: "brand.500",
+          boxShadow: "0 0 0 3px rgba(233, 30, 99, 0.12)",
         },
       },
     },
@@ -52,9 +50,9 @@ const Select = {
         _hover: {
           borderColor: "neutral.400",
         },
-        _focus: {
-          borderColor: "brand.400",
-          boxShadow: "0 0 0 1px var(--chakra-colors-brand-400)",
+        _focusVisible: {
+          borderColor: "brand.500",
+          boxShadow: "0 0 0 3px rgba(233, 30, 99, 0.12)",
         },
       },
     },

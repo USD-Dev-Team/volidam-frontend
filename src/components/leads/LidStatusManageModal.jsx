@@ -9,8 +9,13 @@ import {
     useColorModeValue,
 } from "@chakra-ui/react";
 import { ChevronUp, ChevronDown, Plus } from "lucide-react";
-import AdTasksModalShell from "../../pages/ADtasks/_components/AdTasksModalShell";
+import VolidamModalShell from "../ui/VolidamModalShell";
 import { normalizeStatusRoles } from "../../utils/lidStatus";
+import {
+    volidamGhostButton,
+    volidamOutlineButton,
+    volidamPrimaryButton,
+} from "./leadStyles";
 
 export default function LidStatusManageModal({
     isOpen,
@@ -24,118 +29,112 @@ export default function LidStatusManageModal({
     onSaveOrder,
     loading,
 }) {
-    const rowBg = useColorModeValue("gray.50", "whiteAlpha.50");
-    const borderCol = useColorModeValue("gray.200", "whiteAlpha.200");
+    const rowBg = useColorModeValue("rgba(255,255,255,0.75)", "whiteAlpha.50");
 
     return (
-        <AdTasksModalShell
+        <VolidamModalShell
             isOpen={isOpen}
             onClose={onClose}
             size="lg"
+            scrollBody
             title="Statuslarni boshqarish"
             subtitle="Faqat Super Admin status yaratishi va tartiblashi mumkin"
             footer={
                 <>
                     <Button
+                        {...volidamPrimaryButton}
                         leftIcon={<Plus size={16} />}
-                        colorScheme="blue"
-                        borderRadius="xl"
                         onClick={onAdd}
                     >
                         Yangi status
                     </Button>
                     <Button
-                        variant="outline"
-                        colorScheme="blue"
-                        borderRadius="xl"
+                        {...volidamOutlineButton}
                         onClick={onSaveOrder}
                         isLoading={loading}
                     >
                         Tartibni saqlash
                     </Button>
-                    <Button variant="ghost" onClick={onClose} ml="auto">
+                    <Button {...volidamGhostButton} onClick={onClose} ml="auto">
                         Yopish
                     </Button>
                 </>
             }
         >
-            <VStack spacing={2} align="stretch">
-                {statuses.map((s, index) => {
+            <VStack align="stretch" spacing={2}>
+                {statuses.map((s, idx) => {
                     const roleKeys = s.roleKeys || normalizeStatusRoles(s.roles);
-                    const accent = s.color || "#888780";
                     return (
                         <HStack
                             key={s.id}
-                            p={3}
-                            bg={rowBg}
-                            borderRadius="lg"
+                            px={3}
+                            py={3}
+                            borderRadius="xl"
                             borderWidth="1px"
-                            borderColor={borderCol}
-                            borderLeftWidth="4px"
-                            borderLeftColor={accent}
+                            borderColor="border"
+                            bg={rowBg}
                             justify="space-between"
-                            align="flex-start"
                         >
-                            <Box flex={1} minW={0}>
-                                <Text fontWeight="700" color={accent}>
-                                    {s.name}
-                                </Text>
-                                <HStack mt={1} spacing={1} flexWrap="wrap">
-                                    {roleKeys.map((r) => (
-                                        <Badge
-                                            key={`${s.id}-${r}`}
-                                            variant="subtle"
-                                            colorScheme="gray"
-                                            borderRadius="full"
-                                        >
-                                            {r}
-                                        </Badge>
-                                    ))}
-                                    {s.is_default && (
-                                        <Badge colorScheme="green" variant="subtle" borderRadius="full">
-                                            default
-                                        </Badge>
-                                    )}
-                                </HStack>
-                            </Box>
-                            <HStack flexShrink={0}>
+                            <HStack spacing={3} minW={0} flex={1}>
+                                <Box
+                                    w={3}
+                                    h={3}
+                                    borderRadius="full"
+                                    bg={s.color || "#e91e63"}
+                                    flexShrink={0}
+                                />
+                                <Box minW={0}>
+                                    <Text fontWeight="700" fontSize="sm" noOfLines={1}>
+                                        {s.name}
+                                    </Text>
+                                    <HStack spacing={1} mt={1} flexWrap="wrap">
+                                        {roleKeys.map((r) => (
+                                            <Badge
+                                                key={r}
+                                                fontSize="9px"
+                                                borderRadius="full"
+                                                colorScheme="pink"
+                                                variant="subtle"
+                                            >
+                                                {r}
+                                            </Badge>
+                                        ))}
+                                    </HStack>
+                                </Box>
+                            </HStack>
+                            <HStack spacing={1} flexShrink={0}>
                                 <IconButton
-                                    size="sm"
+                                    size="xs"
                                     variant="ghost"
-                                    icon={<ChevronUp size={16} />}
                                     aria-label="Yuqoriga"
-                                    isDisabled={index === 0}
-                                    onClick={() => onMoveUp(index)}
+                                    icon={<ChevronUp size={14} />}
+                                    isDisabled={idx === 0}
+                                    onClick={() => onMoveUp?.(idx)}
                                 />
                                 <IconButton
-                                    size="sm"
+                                    size="xs"
                                     variant="ghost"
-                                    icon={<ChevronDown size={16} />}
                                     aria-label="Pastga"
-                                    isDisabled={index === statuses.length - 1}
-                                    onClick={() => onMoveDown(index)}
+                                    icon={<ChevronDown size={14} />}
+                                    isDisabled={idx === statuses.length - 1}
+                                    onClick={() => onMoveDown?.(idx)}
                                 />
-                                <Button size="sm" variant="outline" onClick={() => onEdit(s)}>
-                                    Tahrir
+                                <Button size="xs" variant="ghost" onClick={() => onEdit?.(s)}>
+                                    Tahrirlash
                                 </Button>
                                 <Button
-                                    size="sm"
-                                    colorScheme="red"
+                                    size="xs"
                                     variant="ghost"
-                                    onClick={() => onDelete(s)}
+                                    colorScheme="red"
+                                    onClick={() => onDelete?.(s)}
                                 >
-                                    O&apos;chir
+                                    O&apos;chirish
                                 </Button>
                             </HStack>
                         </HStack>
                     );
                 })}
-                {statuses.length === 0 && (
-                    <Text color="gray.500" textAlign="center" py={6}>
-                        Statuslar yo&apos;q. Yangi qo&apos;shing.
-                    </Text>
-                )}
             </VStack>
-        </AdTasksModalShell>
+        </VolidamModalShell>
     );
 }

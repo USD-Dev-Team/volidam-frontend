@@ -41,6 +41,10 @@ import { apiLocationsNote } from "../../../utils/Controllers/apiLocationNotes";
 import PaginationBar from "../../../components/common/PaginationBar";
 import { apiUsers } from "../../../utils/Controllers/Users";
 import { apiManagers } from "../../../utils/Controllers/Managers";
+import {
+    volidamPrimaryButton,
+    volidamGhostButton,
+} from "../../../components/ui/volidamUi";
 
 const UUID_RE =
     /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -276,7 +280,6 @@ export default function CreateTaskModal({
 
     const panelBg = useColorModeValue("gray.50", "whiteAlpha.50");
     const cardBorder = useColorModeValue("gray.200", "whiteAlpha.200");
-    const footerBg = useColorModeValue("gray.50", "whiteAlpha.50");
     const headerBorder = useColorModeValue("gray.200", "whiteAlpha.200");
     const heroBg = useColorModeValue(
         "linear-gradient(135deg, #eff6ff 0%, #e0e7ff 50%, #ddd6fe 100%)",
@@ -906,7 +909,7 @@ export default function CreateTaskModal({
                                     variant={
                                         taskType === "notification" ? "solid" : "outline"
                                     }
-                                    colorScheme="blue"
+                                    colorScheme="pink"
                                     borderRadius="xl"
                                     onClick={() => changeTaskType("notification")}
                                 >
@@ -1009,7 +1012,7 @@ export default function CreateTaskModal({
                                         />
                                     </InputGroup>
                                     <Button
-                                        colorScheme="blue"
+                                        colorScheme="pink"
                                         borderRadius="lg"
                                         onClick={handleSearch}
                                         isLoading={loading}
@@ -1203,7 +1206,7 @@ export default function CreateTaskModal({
                                 {taskType === "reorder" && String(searchTerm || "").trim() ? (
                                     <Button
                                         mt={4}
-                                        colorScheme="blue"
+                                        colorScheme="pink"
                                         borderRadius="xl"
                                         onClick={() => {
                                             const typed = String(searchTerm || "").trim();
@@ -1265,7 +1268,7 @@ export default function CreateTaskModal({
                                                         Partiya: {stock.batch}
                                                     </Text>
                                                     <HStack mt={2} spacing={2}>
-                                                        <Badge colorScheme="blue">
+                                                        <Badge colorScheme="pink">
                                                             {parseFloat(
                                                                 stock.quantity
                                                             ).toLocaleString()}{" "}
@@ -1399,22 +1402,19 @@ export default function CreateTaskModal({
                 </ModalBody>
 
                 <ModalFooter
-                    bg={footerBg}
                     borderTopWidth="1px"
                     borderColor={headerBorder}
                     gap={3}
                     py={4}
                     px={6}
                 >
-                    <Button variant="ghost" onClick={onClose} isDisabled={submitting}>
+                    <Button {...volidamGhostButton} onClick={onClose} isDisabled={submitting}>
                         Bekor qilish
                     </Button>
                     <Button
-                        colorScheme={taskType === "price_update" ? "orange" : "purple"}
+                        {...volidamPrimaryButton}
                         onClick={submit}
                         isLoading={submitting}
-                        px={8}
-                        borderRadius="xl"
                         leftIcon={<Icon as={Plus} boxSize={4} />}
                     >
                         Yaratish

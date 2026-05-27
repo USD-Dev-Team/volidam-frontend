@@ -19,6 +19,7 @@ import { toastService } from "../../utils/toast";
 import ConfirmDelModal from "../common/ConfirmDelModal";
 import LidColumnFormModal from "./LidColumnFormModal";
 import LeadDetailSection from "./LeadDetailSection";
+import { volidamPrimaryButtonSm } from "./leadStyles";
 
 export default function LidColumnsManageSection({
     columns = [],
@@ -86,15 +87,11 @@ export default function LidColumnsManageSection({
 
     const sectionSubtitle = canManage
         ? "Lidlar uchun qo'shimcha maydonlar"
-        : canEditColumn
-          ? "Maydon nomi va majburiylikni tahrirlash mumkin"
-          : "Ro'yxat";
+        : "Ro'yxat (faqat ko'rish)";
 
     const createBtn = canManage ? (
         <Button
-            size="sm"
-            colorScheme="blue"
-            borderRadius="lg"
+            {...volidamPrimaryButtonSm}
             leftIcon={<Plus size={14} />}
             onClick={openCreate}
         >

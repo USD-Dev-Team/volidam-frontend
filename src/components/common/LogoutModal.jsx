@@ -1,65 +1,52 @@
-import { useState } from "react";
 import {
     Button,
-    Modal,
-    ModalOverlay,
-    ModalContent,
-    ModalHeader,
-    ModalBody,
-    ModalFooter,
-    ModalCloseButton,
     useDisclosure,
-    Text
+    Text,
 } from "@chakra-ui/react";
-import { useNavigate } from "react-router-dom";
 import { LucideLogOut } from "lucide-react";
 import { useAuth } from "../../hooks/useAuth";
+import VolidamModalShell from "../ui/VolidamModalShell";
+import { volidamDangerButton, volidamGhostButton } from "../ui/volidamUi";
 
 export default function LogoutModal() {
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const { logout } = useAuth()
-    const handleLogout = () => {
-        logout()
-    };
+    const { logout } = useAuth();
 
     return (
         <>
-            {/* Trigger Button (xs kiyin istalgan joyga bosib qo'ying) */}
             <Button
-                cursor="pointer"
-                padding={"0px"}
-                bg="surface"
-                color={"text"}
-                _hover={{ bg: "red.300", color: "red" }}
+                aria-label="Chiqish"
+                variant="ghost"
+                borderRadius="full"
+                p={2}
+                minW={9}
+                h={9}
+                color="textSecondary"
+                _hover={{ bg: "red.50", color: "red.500", _dark: { bg: "whiteAlpha.100" } }}
                 onClick={onOpen}
             >
                 <LucideLogOut size={20} />
             </Button>
 
-            {/* Modal */}
-            <Modal isOpen={isOpen} onClose={onClose} isCentered>
-                <ModalOverlay
-                    bg="blackAlpha.300"
-                    backdropFilter="blur(6px)"
-                />
-                <ModalContent>
-                    <ModalHeader>Chiqishni tasdiqlang</ModalHeader>
-                    <ModalCloseButton />
-
-                    <ModalBody>
-                        <Text>Haqiqatan ham tizimdan chiqmoqchimisiz?</Text>
-                    </ModalBody>
-
-                    <ModalFooter gap={3}>
-                        <Button variant="ghost" onClick={onClose}>
+            <VolidamModalShell
+                isOpen={isOpen}
+                onClose={onClose}
+                tone="danger"
+                title="Chiqishni tasdiqlang"
+                subtitle="Tizimdan chiqasiz"
+                footer={
+                    <>
+                        <Button {...volidamGhostButton} onClick={onClose}>
                             Bekor qilish
                         </Button>
-                        <Button colorScheme="red" onClick={handleLogout}>
+                        <Button {...volidamDangerButton} onClick={logout}>
                             Chiqish
                         </Button>
-                    </ModalFooter>
-                </ModalContent>
-            </Modal>
+                    </>
+                }
+            >
+                <Text color="text">Haqiqatan ham tizimdan chiqmoqchimisiz?</Text>
+            </VolidamModalShell>
         </>
     );
 }

@@ -317,10 +317,10 @@ function TaskCard({
                                                     ) : null}
                                                     {hasInn ? (
                                                         <Badge
-                                                            colorScheme="blue"
+                                                            colorScheme="pink"
                                                             {...companyChipSx}
                                                             cursor="pointer"
-                                                            _hover={{ bg: "blue.50" }}
+                                                            _hover={{ bg: "mutedBg" }}
                                                             onClick={async (e) => {
                                                                 e.stopPropagation();
                                                                 try {
@@ -440,7 +440,7 @@ function TaskCard({
                                     aria-label="Batafsil ma'lumot"
                                     size="sm"
                                     variant="ghost"
-                                    colorScheme="blue"
+                                    colorScheme="pink"
                                     borderRadius="full"
                                     onClick={(e) => {
                                         e.stopPropagation();

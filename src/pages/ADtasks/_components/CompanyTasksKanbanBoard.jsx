@@ -307,7 +307,7 @@ function CompanyTasksKanbanBoard({
                     aria-label="O‘ngga scroll"
                     icon={<ChevronRight size={22} />}
                     size="md"
-                    colorScheme="blue"
+                    colorScheme="pink"
                     borderRadius="xl"
                     position="absolute"
                     right={2}

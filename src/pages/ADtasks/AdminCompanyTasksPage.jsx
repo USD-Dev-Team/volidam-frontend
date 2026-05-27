@@ -24,6 +24,7 @@ import EditLocationStatusModal from "./_components/EditLocationStatusModal";
 import LocationStatusNoteModal from "./_components/LocationStatusNoteModal";
 import LocationAssignModal from "./_components/LocationAssignModal";
 import ConfirmDelModal from "../../components/common/ConfirmDelModal";
+import { volidamOutlineButton } from "../../components/ui/volidamUi";
 import PaginationBar from "../../components/common/PaginationBar";
 import CompanyKanbanBlock from "./_components/CompanyKanbanBlock";
 import { useAdminCompanyTasksBoard } from "./_components/useAdminCompanyTasksBoard";
@@ -140,11 +141,9 @@ export default function AdminCompanyTasksPage() {
             <Flex justify="space-between" align="center" mb={4} gap={4} wrap="wrap">
                 <Heading size="lg">Kompaniya vazifalari</Heading>
                 <Button
-                    variant="outline"
-                    colorScheme="blue"
+                    {...volidamOutlineButton}
                     size="sm"
                     leftIcon={<ListPlus size={16} />}
-                    borderRadius="lg"
                     onClick={onCreateStatusOpen}
                 >
                     Location status
@@ -221,7 +220,7 @@ export default function AdminCompanyTasksPage() {
                     <Box flexShrink={0}>
                         {!board.assignMode ? (
                             <Button
-                                colorScheme="blue"
+                                colorScheme="pink"
                                 borderRadius="lg"
                                 onClick={() => {
                                     board.setAssignMode(true);
@@ -233,7 +232,7 @@ export default function AdminCompanyTasksPage() {
                         ) : (
                             <HStack>
                                 <Button
-                                    colorScheme="blue"
+                                    colorScheme="pink"
                                     borderRadius="lg"
                                     isDisabled={board.selectedTaskIds.size === 0}
                                     onClick={() =>
@@ -256,7 +255,7 @@ export default function AdminCompanyTasksPage() {
                         )}
                     </Box>
                     <Badge
-                        colorScheme="blue"
+                        colorScheme="pink"
                         px={3}
                         py={1}
                         borderRadius="full"

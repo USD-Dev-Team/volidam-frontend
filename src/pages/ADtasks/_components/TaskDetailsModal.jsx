@@ -463,7 +463,7 @@ export default function TaskDetailsModal({
                                         {locPath ? (
                                             <Button
                                                 size="sm"
-                                                colorScheme="blue"
+                                                colorScheme="pink"
                                                 borderRadius="lg"
                                                 flexShrink={0}
                                                 alignSelf="flex-start"
@@ -538,7 +538,7 @@ export default function TaskDetailsModal({
                                                 Mahsulot joylashuvi
                                             </Text>
                                             <Badge
-                                                colorScheme="blue"
+                                                colorScheme="pink"
                                                 variant="subtle"
                                                 px={3}
                                                 py={1.5}
@@ -557,7 +557,7 @@ export default function TaskDetailsModal({
                                         {stockPath ? (
                                             <Button
                                                 size="sm"
-                                                colorScheme="blue"
+                                                colorScheme="pink"
                                                 borderRadius="lg"
                                                 flexShrink={0}
                                                 alignSelf="flex-start"

@@ -4,7 +4,6 @@ import {
     Text,
     VStack,
     SimpleGrid,
-    Badge,
     Skeleton,
     HStack,
     Flex,
@@ -14,9 +13,10 @@ import {
 } from "@chakra-ui/react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
-import { ArrowLeft, Phone, User, Clock } from "lucide-react";
+import { ArrowLeft, User, Clock } from "lucide-react";
 import { apiLids } from "../../Services/api/Lids";
 import { apiLidColumns } from "../../Services/api/LidColumns";
+import { apiLidStatuses } from "../../Services/api/LidStatuses";
 import { unwrapEntity } from "../../utils/api/parsePagination";
 import { normalizeLidFromApi } from "../../utils/lidBoard";
 import {
@@ -24,12 +24,19 @@ import {
     buildLidValuesPayload,
     parseLidColumnsResponse,
 } from "../../utils/lidColumns";
+import {
+    getApiErrorMessage,
+    normalizeStatusFromApi,
+    sortStatuses,
+    unwrapStatuses,
+} from "../../utils/lidStatus";
 import { getLeadsBasePath } from "../../utils/leadsPaths";
-import { getApiErrorMessage } from "../../utils/lidStatus";
 import { toastService } from "../../utils/toast";
 import { useAuthStore } from "../../store/authStore";
 import { isAdmin, isOperator, isSuperAdmin } from "../../utils/roles";
 import LeadDetailSection from "../../components/leads/LeadDetailSection";
+import LeadDetailLidSection from "../../components/leads/LeadDetailLidSection";
+import { volidamGhostButton } from "../../components/leads/leadStyles";
 import LidColumnsManageSection from "../../components/leads/LidColumnsManageSection";
 import LeadValueFieldsSection from "../../components/leads/LeadValueFieldsSection";
 import { formatDateTime } from "../../utils/tools/formatDateTime";
@@ -41,31 +48,38 @@ export default function LeadDetailPage() {
     const user = useAuthStore((s) => s.user);
     const role = user?.role;
     const canManageColumns = isSuperAdmin(role);
-    const canEditColumn =
+    const canEditLid =
         canManageColumns || isAdmin(role) || isOperator(role);
-    const canEditValues = canEditColumn;
+    const canEditValues = canEditLid;
 
     const listPath = getLeadsBasePath(pathname);
 
     const [lid, setLid] = useState(null);
+    const [statuses, setStatuses] = useState([]);
     const [fetching, setFetching] = useState(true);
     const [columnDefs, setColumnDefs] = useState([]);
     const [valueForm, setValueForm] = useState({});
     const [savedSnapshot, setSavedSnapshot] = useState({});
+    const [savingLid, setSavingLid] = useState(false);
     const [savingValues, setSavingValues] = useState(false);
 
     const loadData = useCallback(async () => {
         if (!id) return;
         setFetching(true);
         try {
-            const [colRes, lidRes] = await Promise.all([
+            const [colRes, lidRes, statusRes] = await Promise.all([
                 apiLidColumns.getAll(),
                 apiLids.getById(id),
+                apiLidStatuses.getAll(),
             ]);
             const cols = parseLidColumnsResponse(colRes);
             const entity = normalizeLidFromApi(unwrapEntity(lidRes.data));
             const form = buildColumnValueFormState(entity, cols);
+            const statusList = sortStatuses(unwrapStatuses(statusRes?.data)).map(
+                normalizeStatusFromApi
+            );
             setColumnDefs(cols);
+            setStatuses(statusList);
             setLid(entity);
             setValueForm(form);
             setSavedSnapshot(form);
@@ -81,7 +95,7 @@ export default function LeadDetailPage() {
         loadData();
     }, [loadData]);
 
-    const dirty = useMemo(() => {
+    const valuesDirty = useMemo(() => {
         return columnDefs.some(
             (c) => (valueForm[c.id] ?? "") !== (savedSnapshot[c.id] ?? "")
         );
@@ -89,6 +103,29 @@ export default function LeadDetailPage() {
 
     const handleValueChange = (columnId, next) => {
         setValueForm((prev) => ({ ...prev, [columnId]: next }));
+    };
+
+    const handleSaveLid = async ({ fio, telefon_raqam, statusId }) => {
+        if (!lid?.id) return;
+        setSavingLid(true);
+        try {
+            const values = buildLidValuesPayload(columnDefs, valueForm);
+            await apiLids.update(lid.id, {
+                fio,
+                telefon_raqam,
+                values,
+            });
+            const currentStatus = lid.status_id || lid.status?.id || "";
+            if (statusId && statusId !== currentStatus) {
+                await apiLids.updateStatus(lid.id, statusId);
+            }
+            await loadData();
+            toastService.success("Lid yangilandi");
+        } catch (err) {
+            toastService.error(getApiErrorMessage(err) || "Saqlanmadi");
+        } finally {
+            setSavingLid(false);
+        }
     };
 
     const handleSaveValues = async () => {
@@ -110,8 +147,7 @@ export default function LeadDetailPage() {
         }
     };
 
-    const statusName = lid?.status?.name ?? null;
-    const statusColor = lid?.status?.color || "#378ADD";
+    const statusColor = lid?.status?.color || "#e91e63";
     const creatorName = lid?.created_by_name || lid?.creator?.full_name || "—";
 
     const isPanel =
@@ -119,10 +155,13 @@ export default function LeadDetailPage() {
 
     return (
         <Box
-            minH={isPanel ? "100%" : "100vh"}
+            flex={isPanel ? "1" : undefined}
+            h={isPanel ? undefined : "auto"}
+            minH={isPanel ? 0 : "100vh"}
             overflowY="auto"
             overflowX="hidden"
             w="100%"
+            minW={0}
             bg="bg"
             pb={{ base: 8, md: 12 }}
         >
@@ -132,12 +171,10 @@ export default function LeadDetailPage() {
                 py={{ base: 3, md: 6 }}
             >
                 <Button
-                    variant="ghost"
+                    {...volidamGhostButton}
                     size="sm"
                     leftIcon={<ArrowLeft size={16} />}
                     mb={{ base: 3, md: 5 }}
-                    px={0}
-                    color="text"
                     onClick={() => navigate(listPath)}
                 >
                     Barcha lidlar
@@ -156,90 +193,49 @@ export default function LeadDetailPage() {
                     </LeadDetailSection>
                 ) : (
                     <VStack align="stretch" spacing={{ base: 4, md: 6 }} w="100%">
-                        <Box
-                            borderRadius={{ base: "xl", md: "2xl" }}
-                            borderWidth="1px"
-                            borderColor="border"
-                            bg="surface"
-                            overflow="hidden"
+                        <LeadDetailSection
+                            title="Asosiy ma'lumotlar"
+                            subtitle="FIO, telefon va status"
                         >
-                            <Flex direction={{ base: "column", sm: "row" }}>
-                                <Box
-                                    w={{ base: "100%", sm: "4px" }}
-                                    h={{ base: "4px", sm: "auto" }}
-                                    flexShrink={0}
-                                    bg={statusColor}
+                            <Box
+                                borderLeftWidth="4px"
+                                borderColor={statusColor}
+                                pl={{ base: 3, md: 4 }}
+                            >
+                                <LeadDetailLidSection
+                                    lid={lid}
+                                    statuses={statuses}
+                                    canEdit={canEditLid}
+                                    saving={savingLid}
+                                    onSave={handleSaveLid}
                                 />
-                                <Box flex={1} p={{ base: 4, md: 6 }} minW={0}>
-                                    {statusName ? (
-                                        <Badge
-                                            mb={3}
-                                            px={2.5}
-                                            py={0.5}
-                                            borderRadius="md"
-                                            variant="outline"
-                                            borderColor={statusColor}
-                                            color={statusColor}
-                                            fontWeight="700"
-                                            fontSize="xs"
-                                        >
-                                            {statusName}
-                                        </Badge>
-                                    ) : null}
+                            </Box>
 
-                                    <Text
-                                        fontSize={{ base: "xl", md: "2xl" }}
-                                        fontWeight="800"
-                                        color="text"
-                                        lineHeight="short"
-                                        mb={3}
-                                        wordBreak="break-word"
-                                    >
-                                        {lid.fio || "—"}
-                                    </Text>
-
-                                    {lid.telefon_raqam ? (
-                                        <HStack
-                                            as="a"
-                                            href={`tel:${lid.telefon_raqam}`}
-                                            spacing={2}
-                                            color="text"
-                                            fontWeight="600"
-                                            fontSize={{ base: "sm", md: "md" }}
-                                            onClick={(e) => e.stopPropagation()}
-                                        >
-                                            <Icon as={Phone} boxSize={4} color="green.500" />
-                                            <Text wordBreak="break-all">{lid.telefon_raqam}</Text>
-                                        </HStack>
-                                    ) : null}
-
-                                    <SimpleGrid
-                                        columns={{ base: 1, sm: 2, lg: 3 }}
-                                        spacing={{ base: 3, md: 4 }}
-                                        mt={6}
-                                        pt={5}
-                                        borderTopWidth="1px"
-                                        borderColor="border"
-                                    >
-                                        <MetaRow
-                                            icon={User}
-                                            label="Yaratuvchi"
-                                            value={creatorName}
-                                        />
-                                        <MetaRow
-                                            icon={Clock}
-                                            label="Yaratilgan"
-                                            value={formatDateTime(lid.createdAt)}
-                                        />
-                                        <MetaRow
-                                            icon={Clock}
-                                            label="Yangilangan"
-                                            value={formatDateTime(lid.updatedAt)}
-                                        />
-                                    </SimpleGrid>
-                                </Box>
-                            </Flex>
-                        </Box>
+                            <SimpleGrid
+                                columns={{ base: 1, sm: 2, lg: 3 }}
+                                spacing={4}
+                                mt={6}
+                                pt={6}
+                                borderTopWidth="1px"
+                                borderColor="border"
+                            >
+                                <MetaRow
+                                    icon={User}
+                                    label="Yaratuvchi"
+                                    value={creatorName}
+                                />
+                                <MetaRow
+                                    icon={Clock}
+                                    label="Yaratilgan"
+                                    value={formatDateTime(lid.createdAt)}
+                                />
+                                <MetaRow
+                                    icon={Clock}
+                                    label="Yangilangan"
+                                    value={formatDateTime(lid.updatedAt)}
+                                />
+                            </SimpleGrid>
+                        </LeadDetailSection>
 
                         <Grid
                             templateColumns={{
@@ -254,7 +250,7 @@ export default function LeadDetailPage() {
                                 <LeadValueFieldsSection
                                     columns={columnDefs}
                                     values={valueForm}
-                                    dirty={dirty}
+                                    dirty={valuesDirty}
                                     readOnly={!canEditValues}
                                     onChange={handleValueChange}
                                     onSave={canEditValues ? handleSaveValues : undefined}
@@ -272,7 +268,7 @@ export default function LeadDetailPage() {
                                         loading={fetching}
                                         onRefresh={loadData}
                                         canManage={canManageColumns}
-                                        canEditColumn={canEditColumn}
+                                        canEditColumn={false}
                                     />
                                 </Box>
                             </GridItem>

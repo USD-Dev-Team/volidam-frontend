@@ -13,10 +13,15 @@ import {
     FormErrorMessage,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import AdTasksModalShell from "../../pages/ADtasks/_components/AdTasksModalShell";
+import VolidamModalShell from "../ui/VolidamModalShell";
 import { ROLES } from "../../utils/roles";
 import { normalizeStatusRoles } from "../../utils/lidStatus";
-import { filterFieldProps } from "./leadStyles";
+import {
+    filterFieldProps,
+    volidamFormLabel,
+    volidamGhostButton,
+    volidamPrimaryButton,
+} from "./leadStyles";
 
 const ROLE_OPTIONS = [
     { value: ROLES.OPERATOR, label: "Operator" },
@@ -93,19 +98,18 @@ export default function LidStatusFormModal({
     };
 
     return (
-        <AdTasksModalShell
+        <VolidamModalShell
             isOpen={isOpen}
             onClose={onClose}
             title={mode === "create" ? "Yangi status" : "Statusni tahrirlash"}
             subtitle="Status nomi, rangi va ko'rinish huquqlari"
             footer={
                 <>
-                    <Button variant="ghost" onClick={onClose} isDisabled={loading}>
+                    <Button {...volidamGhostButton} onClick={onClose} isDisabled={loading}>
                         Bekor qilish
                     </Button>
                     <Button
-                        colorScheme="blue"
-                        borderRadius="xl"
+                        {...volidamPrimaryButton}
                         isLoading={loading}
                         onClick={handleSubmit}
                     >
@@ -181,7 +185,7 @@ export default function LidStatusFormModal({
                                     key={r.value}
                                     isChecked={form.roles.includes(r.value)}
                                     onChange={() => toggleRole(r.value)}
-                                    colorScheme="blue"
+                                    colorScheme="pink"
                                 >
                                     <Text fontSize="sm">{r.label}</Text>
                                 </Checkbox>
@@ -199,7 +203,7 @@ export default function LidStatusFormModal({
                                     is_default: e.target.checked,
                                 }))
                             }
-                            colorScheme="blue"
+                            colorScheme="pink"
                         />
                         <FormLabel mb={0} fontSize="sm">
                             Default status
@@ -207,6 +211,6 @@ export default function LidStatusFormModal({
                     </FormControl>
                 </VStack>
             </form>
-        </AdTasksModalShell>
+        </VolidamModalShell>
     );
 }

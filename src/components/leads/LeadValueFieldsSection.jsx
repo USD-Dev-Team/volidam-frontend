@@ -8,10 +8,15 @@ import {
     Button,
     Badge,
     SimpleGrid,
-    Divider,
+    Box,
+    useColorModeValue,
 } from "@chakra-ui/react";
 import { Save } from "lucide-react";
-import { filterFieldProps } from "./leadStyles";
+import {
+    filterFieldProps,
+    volidamFormLabel,
+    volidamPrimaryButtonSm,
+} from "./leadStyles";
 import LeadDetailSection from "./LeadDetailSection";
 
 export default function LeadValueFieldsSection({
@@ -23,6 +28,8 @@ export default function LeadValueFieldsSection({
     readOnly = false,
     dirty = false,
 }) {
+    const fieldBg = useColorModeValue("rgba(255,255,255,0.75)", "whiteAlpha.50");
+
     if (!columns.length) {
         return (
             <LeadDetailSection
@@ -39,9 +46,7 @@ export default function LeadValueFieldsSection({
     const saveAction =
         !readOnly && onSave ? (
             <Button
-                size="sm"
-                colorScheme="blue"
-                borderRadius="lg"
+                {...volidamPrimaryButtonSm}
                 leftIcon={<Save size={15} />}
                 isLoading={saving}
                 loadingText="Saqlanmoqda..."
@@ -59,7 +64,12 @@ export default function LeadValueFieldsSection({
             action={
                 <HStack spacing={2} flexShrink={0}>
                     {dirty && !readOnly ? (
-                        <Badge colorScheme="orange" variant="subtle">
+                        <Badge
+                            colorScheme="orange"
+                            variant="subtle"
+                            borderRadius="full"
+                            px={2}
+                        >
                             Saqlanmagan
                         </Badge>
                     ) : null}
@@ -69,54 +79,66 @@ export default function LeadValueFieldsSection({
         >
             <SimpleGrid
                 columns={{ base: 1, sm: 2, lg: 3, xl: 4 }}
-                spacing={{ base: 3, md: 4 }}
+                spacing={4}
                 w="100%"
             >
                 {columns.map((col) => (
-                    <FormControl key={col.id} isRequired={false}>
-                        <FormLabel
-                            fontSize="sm"
-                            mb={1.5}
-                            fontWeight="600"
-                            color="text"
-                            requiredIndicator={<></>}
-                        >
-                            <HStack spacing={2} flexWrap="wrap">
-                                <Text as="span">{col.label}</Text>
-                                {col.is_required ? (
-                                    <Text as="span" fontSize="xs" color="orange.500">
-                                        majburiy
+                    <Box
+                        key={col.id}
+                        p={3}
+                        borderRadius="xl"
+                        borderWidth="1px"
+                        borderColor="border"
+                        bg={fieldBg}
+                    >
+                        <FormControl isRequired={false}>
+                            <FormLabel
+                                {...volidamFormLabel}
+                                mb={1.5}
+                                requiredIndicator={<></>}
+                            >
+                                <HStack spacing={2} flexWrap="wrap">
+                                    <Text as="span" textTransform="none" fontSize="sm">
+                                        {col.label}
                                     </Text>
-                                ) : null}
-                            </HStack>
-                        </FormLabel>
-                        <Input
-                            {...filterFieldProps}
-                            value={values[col.id] ?? ""}
-                            isReadOnly={readOnly}
-                            placeholder="Qiymat kiriting"
-                            onChange={(e) => onChange?.(col.id, e.target.value)}
-                        />
-                    </FormControl>
+                                    {col.is_required ? (
+                                        <Badge
+                                            colorScheme="orange"
+                                            fontSize="9px"
+                                            borderRadius="full"
+                                        >
+                                            majburiy
+                                        </Badge>
+                                    ) : null}
+                                </HStack>
+                            </FormLabel>
+                            <Input
+                                {...filterFieldProps}
+                                size="sm"
+                                value={values[col.id] ?? ""}
+                                isReadOnly={readOnly}
+                                placeholder="Qiymat..."
+                                onChange={(e) =>
+                                    onChange?.(col.id, e.target.value)
+                                }
+                            />
+                        </FormControl>
+                    </Box>
                 ))}
             </SimpleGrid>
 
             {!readOnly && onSave && dirty ? (
-                <>
-                    <Divider my={5} borderColor="border" display={{ base: "block", md: "none" }} />
-                    <Flex justify="flex-end" display={{ base: "flex", md: "none" }}>
-                        <Button
-                            w="full"
-                            colorScheme="blue"
-                            borderRadius="lg"
-                            leftIcon={<Save size={16} />}
-                            isLoading={saving}
-                            onClick={onSave}
-                        >
-                            O&apos;zgarishlarni saqlash
-                        </Button>
-                    </Flex>
-                </>
+                <Flex justify="flex-end" mt={5} display={{ base: "flex", md: "none" }}>
+                    <Button
+                        {...volidamPrimaryButtonSm}
+                        w="full"
+                        leftIcon={<Save size={16} />}
+                        isLoading={saving}
+                        onClick={onSave}
+                    >
+                        O&apos;zgarishlarni saqlash
+                    </Button>
+                </Flex>
             ) : null}
         </LeadDetailSection>
     );

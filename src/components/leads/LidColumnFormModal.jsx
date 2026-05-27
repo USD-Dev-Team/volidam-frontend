@@ -7,8 +7,13 @@ import {
     Switch,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import AdTasksModalShell from "../../pages/ADtasks/_components/AdTasksModalShell";
-import { filterFieldProps } from "./leadStyles";
+import VolidamModalShell from "../ui/VolidamModalShell";
+import {
+    filterFieldProps,
+    volidamFormLabel,
+    volidamGhostButton,
+    volidamPrimaryButton,
+} from "./leadStyles";
 
 const empty = { label: "", is_required: false, order: 0 };
 
@@ -51,22 +56,19 @@ export default function LidColumnFormModal({
     };
 
     return (
-        <AdTasksModalShell
+        <VolidamModalShell
             isOpen={isOpen}
             onClose={onClose}
             size="md"
-            isCentered
-            closeOnOverlayClick
             title={mode === "create" ? "Yangi maydon" : "Maydonni tahrirlash"}
             subtitle="Lid kartochkasidagi qo'shimcha ustun"
             footer={
                 <>
-                    <Button variant="ghost" onClick={onClose} isDisabled={loading}>
+                    <Button {...volidamGhostButton} onClick={onClose} isDisabled={loading}>
                         Bekor qilish
                     </Button>
                     <Button
-                        colorScheme="blue"
-                        borderRadius="xl"
+                        {...volidamPrimaryButton}
                         isLoading={loading}
                         loadingText="Saqlanmoqda..."
                         onClick={handleSubmit}
@@ -77,16 +79,16 @@ export default function LidColumnFormModal({
             }
         >
             <form onSubmit={handleSubmit}>
-                <VStack spacing={4} align="stretch">
+                <VStack spacing={5} align="stretch">
                     <FormControl isRequired>
-                        <FormLabel fontSize="sm">Nomi (label)</FormLabel>
+                        <FormLabel {...volidamFormLabel}>Nomi (label)</FormLabel>
                         <Input
                             {...filterFieldProps}
                             value={form.label}
                             onChange={(e) =>
                                 setForm((p) => ({ ...p, label: e.target.value }))
                             }
-                            placeholder="Masalan: Darsga kelish vaqti"
+                            placeholder="Masalan: Kurs turi"
                         />
                     </FormControl>
 
@@ -99,14 +101,14 @@ export default function LidColumnFormModal({
                                     is_required: e.target.checked,
                                 }))
                             }
-                            colorScheme="blue"
+                            colorScheme="pink"
                         />
-                        <FormLabel mb={0} fontSize="sm">
+                        <FormLabel mb={0} fontSize="sm" color="text" fontWeight="600">
                             Majburiy maydon
                         </FormLabel>
                     </FormControl>
                 </VStack>
             </form>
-        </AdTasksModalShell>
+        </VolidamModalShell>
     );
 }

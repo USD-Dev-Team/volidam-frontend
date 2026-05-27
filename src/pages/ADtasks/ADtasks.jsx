@@ -48,6 +48,10 @@ import EditTaskStatusModal from "./_components/EditTaskStatusModal";
 import EditTaskModal from "./_components/EditTaskModal";
 import CancelTaskDropModal from "./_components/CancelTaskDropModal";
 import ConfirmDelModal from "../../components/common/ConfirmDelModal";
+import {
+    volidamPrimaryButton,
+    volidamOutlineButton,
+} from "../../components/ui/volidamUi";
 import PaginationBar from "../../components/common/PaginationBar";
 import { apiUsers } from "../../utils/Controllers/Users";
 import { apiManagers } from "../../utils/Controllers/Managers";
@@ -1310,21 +1314,16 @@ export function AdminTaskKanbanPage({ pageHeading: pageHeadingProp } = {}) {
                 </HStack>
                 <VStack align="stretch" spacing={2}>
                     <Button
-                        colorScheme="blue"
+                        {...volidamPrimaryButton}
                         leftIcon={<Icon as={Plus} boxSize={5} />}
-                        borderRadius="xl"
-                        size="md"
                         onClick={onCreateOpen}
-                        boxShadow="sm"
                     >
                         Vazifa yaratish
                     </Button>
                     <Button
-                        variant="outline"
-                        colorScheme="blue"
+                        {...volidamOutlineButton}
                         size="sm"
                         leftIcon={<Icon as={ListPlus} boxSize={4} />}
-                        borderRadius="lg"
                         onClick={onCreateStatusOpen}
                     >
                         Status yaratish
@@ -1335,7 +1334,7 @@ export function AdminTaskKanbanPage({ pageHeading: pageHeadingProp } = {}) {
             <Flex mb="14px" align="center" gap={3} flexWrap="wrap">
                 <Tabs
                     variant="solid-rounded"
-                    colorScheme="blue"
+                    colorScheme="pink"
                     index={typeTabIndex}
                     onChange={(i) => {
                         const next = TASK_TYPE_TABS_MULTI[i]?.key;
@@ -1441,7 +1440,7 @@ export function AdminTaskKanbanPage({ pageHeading: pageHeadingProp } = {}) {
                     </FormControl>
 
                     <Badge
-                        colorScheme="blue"
+                        colorScheme="pink"
                         px={3}
                         py={1}
                         borderRadius="full"

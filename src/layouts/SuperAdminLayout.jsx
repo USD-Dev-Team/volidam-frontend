@@ -1,4 +1,14 @@
 import { Outlet } from "react-router";
+import Sidebar from "../components/common/Sidebar";
+import { useUIStore } from "../store/useUIStore";
+import { LayoutDashboard, UserCog, Headset, TrendingUp } from "lucide-react";
+
+const links = [
+    { label: "Bosh sahifa", to: "/superadmin", icon: LayoutDashboard, end: true },
+    { label: "Adminlar",    to: "/superadmin/admins",     icon: UserCog },
+    { label: "Operatorlar", to: "/superadmin/operators",  icon: Headset },
+    { label: "Lidlar",      to: "/superadmin/leads",      icon: TrendingUp },
+];
 import { Box, Flex } from "@chakra-ui/react";
 import SuperAdminHeader from "../pages/Dashboard/SuperAdminHeader";
 import LeadDetailPage from "../pages/Leads/LeadDetailPage";
