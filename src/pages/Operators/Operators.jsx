@@ -3,12 +3,6 @@ import {
   Box,
   Heading,
   Button,
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -26,9 +20,18 @@ import {
   Spinner,
   Center,
   Text,
-  Badge,
+  SimpleGrid,
+  Avatar,
+  Flex,
 } from "@chakra-ui/react";
-import { EditIcon, DeleteIcon, AddIcon, LockIcon } from "@chakra-ui/icons";
+import {
+  EditIcon,
+  DeleteIcon,
+  AddIcon,
+  LockIcon,
+  ChevronLeftIcon,
+} from "@chakra-ui/icons";
+import { useNavigate } from "react-router-dom";
 import { apiUsers } from "../../Services/api/Users";
 import {
   dataTableContainerProps,
@@ -50,6 +53,8 @@ const emptyForm = {
 };
 
 export default function Operators() {
+  const navigate = useNavigate();
+
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState(emptyForm);
@@ -146,13 +151,19 @@ export default function Operators() {
 
   return (
     <Box p={6}>
-      <HStack justify="space-between" mb={4}>
-        <Heading size="lg" color="text">
-          Operatorlar
-        </Heading>
+      <HStack justify="space-between" mb={6}>
+        <HStack spacing={2}>
+          <IconButton
+            // icon={<ArrowLeft size={18} />}
+            variant="ghost"
+            aria-label="Orqaga"
+            onClick={() => navigate("/superadmin")}
+          />
+        </HStack>
         <Button
           leftIcon={<AddIcon />}
           {...volidamPrimaryButton}
+          colorScheme="blue"
           onClick={handleOpenAdd}
         >
           Yaratish
@@ -162,6 +173,10 @@ export default function Operators() {
       {loading ? (
         <Center py={10}>
           <Spinner size="xl" />
+        </Center>
+      ) : users.length === 0 ? (
+        <Center py={10}>
+          <Text color="gray.400">Ma'lumot yo'q</Text>
         </Center>
       ) : (
         <Box {...dataTableContainerProps}>
@@ -225,7 +240,6 @@ export default function Operators() {
         </Box>
       )}
 
-      {/* Add / Edit Modal */}
       <Modal isOpen={isFormOpen} onClose={onFormClose} isCentered>
         <ModalOverlay />
         <ModalContent>
@@ -279,7 +293,6 @@ export default function Operators() {
         </ModalContent>
       </Modal>
 
-      {/* Delete Confirm Modal */}
       <Modal isOpen={isDeleteOpen} onClose={onDeleteClose} isCentered size="sm">
         <ModalOverlay />
         <ModalContent>
@@ -299,7 +312,6 @@ export default function Operators() {
         </ModalContent>
       </Modal>
 
-      {/* Reset Password Modal */}
       <Modal isOpen={isResetOpen} onClose={onResetClose} isCentered size="sm">
         <ModalOverlay />
         <ModalContent>
@@ -329,4 +341,3 @@ export default function Operators() {
     </Box>
   );
 }
-

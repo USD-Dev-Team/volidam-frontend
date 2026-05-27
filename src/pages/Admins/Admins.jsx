@@ -1,12 +1,39 @@
 import { useEffect, useState } from "react";
 import {
-    Box, Heading, Button, Table, Thead, Tbody, Tr, Th, Td,
-    Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody,
-    ModalFooter, ModalCloseButton, useDisclosure, Input,
-    Select, FormControl, FormLabel, IconButton, HStack,
-    useToast, Spinner, Center, Text, Badge
+  Box,
+  Heading,
+  Button,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  ModalCloseButton,
+  useDisclosure,
+  Input,
+  FormControl,
+  FormLabel,
+  IconButton,
+  HStack,
+  useToast,
+  Spinner,
+  Center,
+  Text,
+  Badge,
+  SimpleGrid,
+  Avatar,
+  Flex,
+  Grid,
 } from "@chakra-ui/react";
-import { EditIcon, DeleteIcon, AddIcon, LockIcon } from "@chakra-ui/icons";
+import {
+  EditIcon,
+  DeleteIcon,
+  AddIcon,
+  LockIcon,
+  ChevronLeftIcon,
+} from "@chakra-ui/icons";
+import { useNavigate } from "react-router-dom";
 import { apiUsers } from "../../Services/api/Users";
 import {
     dataTableContainerProps,
@@ -21,94 +48,109 @@ import {
 } from "../../components/ui/volidamUi";
 
 const emptyForm = {
-    full_name: "",
-    username: "",
-    password: "",
-    role: "admin"
+  full_name: "",
+  username: "",
+  password: "",
+  role: "admin",
+};
+
+const roleColor = (role) => {
+  switch (role) {
+    case "admin":
+      return "red";
+    case "manager":
+      return "blue";
+    default:
+      return "gray";
+  }
 };
 
 export default function Admins() {
-    const [users, setUsers] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const [formData, setFormData] = useState(emptyForm);
-    const [editId, setEditId] = useState(null);
-    const [deleteId, setDeleteId] = useState(null);
-    const [resetId, setResetId] = useState(null);
-    const [newPassword, setNewPassword] = useState("");
+  const navigate = useNavigate();
 
-    const { isOpen: isFormOpen, onOpen: onFormOpen, onClose: onFormClose } = useDisclosure();
-    const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
-    const { isOpen: isResetOpen, onOpen: onResetOpen, onClose: onResetClose } = useDisclosure();
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState(emptyForm);
+  const [editId, setEditId] = useState(null);
+  const [deleteId, setDeleteId] = useState(null);
+  const [resetId, setResetId] = useState(null);
+  const [newPassword, setNewPassword] = useState("");
 
-    const toast = useToast();
+  const {
+    isOpen: isFormOpen,
+    onOpen: onFormOpen,
+    onClose: onFormClose,
+  } = useDisclosure();
+  const {
+    isOpen: isDeleteOpen,
+    onOpen: onDeleteOpen,
+    onClose: onDeleteClose,
+  } = useDisclosure();
+  const {
+    isOpen: isResetOpen,
+    onOpen: onResetOpen,
+    onClose: onResetClose,
+  } = useDisclosure();
 
-    const fetchUsers = async () => {
-        setLoading(true);
-        try {
-            const res = await apiUsers.getUsers("admin");
-            setUsers(res.data || []);
-        } catch {
-        setUsers([]);
-        } finally {
-            setLoading(false);
-        }
-    };
+  const toast = useToast();
 
-    useEffect(() => {
-        fetchUsers();
-    }, []);
+  const fetchUsers = async () => {
+    setLoading(true);
+    try {
+      const res = await apiUsers.getUsers("admin");
+      setUsers(res.data || []);
+    } catch {
+      setUsers([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    const handleOpenAdd = () => {
-        setEditId(null);
-        setFormData(emptyForm);
-        onFormOpen();
-    };
+  useEffect(() => {
+    fetchUsers();
+  }, []);
 
-    const handleOpenEdit = (user) => {
-        setEditId(user.id);
-        setFormData({
-            full_name: user.full_name,
-            username: user.username,
-            password: "",
-            role: user.role
-        });
-        onFormOpen();
-    };
+  const handleOpenAdd = () => {
+    setEditId(null);
+    setFormData(emptyForm);
+    onFormOpen();
+  };
 
-    const handleSubmit = async () => {
-        try {
-            if (editId) {
-                await apiUsers.Update(formData, editId);
-            } else {
-                await apiUsers.Add(formData);
-            }
-            onFormClose();
-          setFormData(emptyForm);
-        await fetchUsers();
-        } catch {
-            toast({ title: "Xatolik yuz berdi", status: "error", duration: 3000 });
-        }
-    };
+  const handleOpenEdit = (user) => {
+    setEditId(user.id);
+    setFormData({
+      full_name: user.full_name,
+      username: user.username,
+      password: "",
+      role: user.role,
+    });
+    onFormOpen();
+  };
 
-    const handleDelete = async () => {
-        try {
-            await apiUsers.Delete(deleteId);
-            onDeleteClose();
-            fetchUsers();
-        } catch {
-            toast({ title: "Xatolik yuz berdi", status: "error", duration: 3000 });
-        }
-    };
+  const handleSubmit = async () => {
+    try {
+      if (editId) {
+        await apiUsers.Update(formData, editId);
+      } else {
+        await apiUsers.Add(formData);
+      }
+      onFormClose();
+      setFormData(emptyForm);
+      await fetchUsers();
+    } catch {
+      toast({ title: "Xatolik yuz berdi", status: "error", duration: 3000 });
+    }
+  };
 
-    const handleResetPassword = async () => {
-        try {
-            await apiUsers.ResetPassword(resetId, { password: newPassword });
-            onResetClose();
-            setNewPassword("");
-        } catch {
-            toast({ title: "Xatolik yuz berdi", status: "error", duration: 3000 });
-        }
-    };
+  const handleDelete = async () => {
+    try {
+      await apiUsers.Delete(deleteId);
+      onDeleteClose();
+      fetchUsers();
+    } catch {
+      toast({ title: "Xatolik yuz berdi", status: "error", duration: 3000 });
+    }
+  };
 
     const roleColor = (role) => {
         switch (role) {
@@ -193,7 +235,123 @@ export default function Admins() {
                         </Tbody>
                     </Table>
                 </Box>
+
+                <Flex
+                  align="center"
+                  gap={1}
+                  flexShrink={0}
+                  borderLeft="1px solid"
+                  borderColor="border"
+                  pl={3}
+                >
+                  <IconButton
+                    size="xs"
+                    icon={<EditIcon />}
+                    colorScheme="blue"
+                    variant="ghost"
+                    aria-label="Tahrirlash"
+                    onClick={() => handleOpenEdit(user)}
+                  />
+                  <IconButton
+                    size="xs"
+                    icon={<LockIcon />}
+                    colorScheme="orange"
+                    variant="ghost"
+                    aria-label="Parolni tiklash"
+                    onClick={() => {
+                      setResetId(user.id);
+                      onResetOpen();
+                    }}
+                  />
+                  <IconButton
+                    size="xs"
+                    icon={<DeleteIcon />}
+                    colorScheme="red"
+                    variant="ghost"
+                    aria-label="O'chirish"
+                    onClick={() => {
+                      setDeleteId(user.id);
+                      onDeleteOpen();
+                    }}
+                  />
+                </Flex>
+              </Flex>
+            </Box>
+          ))}
+        </SimpleGrid>
+      )}
+
+      <Modal isOpen={isFormOpen} onClose={onFormClose} isCentered>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>
+            {editId ? "Adminni tahrirlash" : "Admin qo'shish"}
+          </ModalHeader>
+          <ModalCloseButton />
+          <ModalBody display="flex" flexDirection="column" gap={3}>
+            <FormControl>
+              <FormLabel>To'liq ism</FormLabel>
+              <Input
+                value={formData.full_name}
+                onChange={(e) =>
+                  setFormData({ ...formData, full_name: e.target.value })
+                }
+                placeholder="John Doe"
+              />
+            </FormControl>
+            <FormControl>
+              <FormLabel>Username</FormLabel>
+              <Input
+                value={formData.username}
+                onChange={(e) =>
+                  setFormData({ ...formData, username: e.target.value })
+                }
+                placeholder="john"
+              />
+            </FormControl>
+            {!editId && (
+              <FormControl>
+                <FormLabel>Parol</FormLabel>
+                <Input
+                  type="password"
+                  value={formData.password}
+                  onChange={(e) =>
+                    setFormData({ ...formData, password: e.target.value })
+                  }
+                  placeholder="••••••••"
+                />
+              </FormControl>
             )}
+          </ModalBody>
+          <ModalFooter gap={2}>
+            <Button variant="ghost" onClick={onFormClose}>
+              Bekor qilish
+            </Button>
+            <Button colorScheme="blue" onClick={handleSubmit}>
+              {editId ? "Saqlash" : "Qo'shish"}
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      <Modal isOpen={isDeleteOpen} onClose={onDeleteClose} isCentered size="sm">
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>O'chirishni tasdiqlang</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Text>Haqiqatan ham bu foydalanuvchini o'chirmoqchimisiz?</Text>
+          </ModalBody>
+          <ModalFooter gap={2}>
+            <Button variant="ghost" onClick={onDeleteClose}>
+              Yo'q
+            </Button>
+            <Button colorScheme="red" onClick={handleDelete}>
+              Ha, o'chirish
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
 
             {/* Add / Edit Modal */}
             <Modal isOpen={isFormOpen} onClose={onFormClose} isCentered>
@@ -223,8 +381,8 @@ export default function Admins() {
             <FormLabel>Parol</FormLabel>
             <Input
                 type="password"
-                value={formData.password}
-                onChange={e => setFormData({ ...formData, password: e.target.value })}
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
                 placeholder="••••••••"
             />
         </FormControl>
