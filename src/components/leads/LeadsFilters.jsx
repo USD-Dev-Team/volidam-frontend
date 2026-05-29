@@ -49,7 +49,7 @@ export default function LeadsFilters({
                 </Select>
             </FormControl>
 
-            <FormControl w={{ base: "full", md: "200px" }} flex="0 0 auto">
+            <FormControl w={{ base: "full", md: "450px" }} flex="0 0 auto">
                 <FormLabel fontSize="xs" color={labelColor} mb={1} fontWeight="600">
                     Qidiruv
                 </FormLabel>
