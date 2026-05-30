@@ -19,6 +19,8 @@ import {
   Tooltip,
   ResponsiveContainer,
   Cell,
+  PieChart,
+  Pie,
 } from "recharts";
 import { useAuthStore } from "../../store/authStore";
 import apiStatistics from "../../Services/api/apiStatistics";
@@ -176,6 +178,219 @@ function PeriodToggle({ active, onChange, theme }) {
   );
 }
 
+function OrderStatusCard({ data, total, loading, theme }) {
+  const activeData = (data || []).filter((s) => s.count > 0);
+  const emptySlice = [{ count: 1, color: theme.border }];
+
+  return (
+    <Box
+      bg={theme.surface}
+      borderRadius="16px"
+      p="22px"
+      border="1px solid"
+      borderColor={theme.border}
+      minW={0}
+      display="flex"
+      flexDirection="column"
+    >
+      <Flex justify="space-between" align="center" mb="18px">
+        <Text fontSize="14px" fontWeight="700" color={theme.text}>
+        Holati bo'yicha (bugun)
+        </Text>
+        <Text fontSize="12px" fontWeight="600" color={theme.textMuted}>
+          {fmt(new Date())}
+        </Text>
+      </Flex>
+      {loading ? (
+        <Flex flex={1} align="center" justify="center">
+          <Spinner color={theme.accent} />
+        </Flex>
+      ) : data?.length ? (
+        <VStack spacing={0} align="stretch">
+          {data.map((s, i) => {
+            const pct = total ? Math.round((s.count / total) * 100) : 0;
+            return (
+              <Box
+                key={i}
+                py="10px"
+                borderColor={theme.border}
+                _last={{ borderBottom: "none" }}
+              >
+                <Flex align="center" gap={2} mb="6px">
+                  <Box
+                    w="8px"
+                    h="8px"
+                    borderRadius="50%"
+                    bg={s.color}
+                    flexShrink={0}
+                  />
+                  <Text
+                    fontSize="12px"
+                    color={theme.textMuted}
+                    fontWeight="500"
+                    flex={1}
+                    isTruncated
+                  >
+                    {s.status_name}
+                  </Text>
+                  <Text fontSize="13px" fontWeight="700" color={theme.text}>
+                    {s.count}
+                  </Text>
+                </Flex>
+                <Box
+                  bg={theme.trackBg}
+                  borderRadius="999px"
+                  h="5px"
+                  overflow="hidden"
+                  ml="16px"
+                >
+                  <Box
+                    bg={s.color}
+                    h="100%"
+                    w={`${pct}%`}
+                    borderRadius="999px"
+                    transition="width 0.5s ease"
+                  />
+                </Box>
+              </Box>
+            );
+          })}
+        </VStack>
+      ) : (
+        <Flex flex={1} align="center" justify="center">
+          <Text fontSize="13px" color={theme.textMuted}>
+            Ma'lumot yo'q
+          </Text>
+        </Flex>
+      )}
+    </Box>
+  );
+}
+
+function RangeStatusCard({ data, total, loading, theme }) {
+  const activeData = (data || []).filter((s) => s.count > 0);
+
+  return (
+    <>
+      {loading ? (
+        <Flex h="200px" align="center" justify="center">
+          <Spinner color={theme.accent} />
+        </Flex>
+      ) : data?.length ? (
+        <Flex gap={12} align="flex-start" flexWrap="wrap">
+          <Box position="relative" flexShrink={0} w="240px" h="240px">
+            <ResponsiveContainer width={240} height={240}>
+              <PieChart>
+                <Pie
+                  data={activeData.length ? activeData : [{ count: 1, color: theme.border }]}
+                  dataKey="count"
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={80}
+                  outerRadius={110}
+                  paddingAngle={activeData.length > 1 ? 3 : 0}
+                  startAngle={90}
+                  endAngle={-270}
+                  labelLine={false}
+                >
+                  {(activeData.length ? activeData : [{ count: 1, color: theme.border }]).map(
+                    (entry, i) => (
+                      <Cell key={i} fill={entry.color} stroke="none" />
+                    )
+                  )}
+                </Pie>
+              </PieChart>
+            </ResponsiveContainer>
+            <Flex
+              position="absolute"
+              top="50%"
+              left="50%"
+              transform="translate(-50%, -50%)"
+              direction="column"
+              align="center"
+              pointerEvents="none"
+            >
+              <Text fontSize="36px" fontWeight="800" color={theme.text} lineHeight="1">
+                {total ?? 0}
+              </Text>
+              <Text
+                fontSize="11px"
+                fontWeight="700"
+                color={theme.textMuted}
+                textTransform="uppercase"
+                letterSpacing="0.08em"
+                mt="4px"
+              >
+                JAMI
+              </Text>
+            </Flex>
+          </Box>
+
+          <VStack flex={1} minW="260px" spacing={0} align="stretch">
+            {data.map((s, i) => {
+              const pct = total ? Math.round((s.count / total) * 100) : 0;
+              return (
+                <Box
+                  key={i}
+                  py="14px"
+                  borderColor={theme.border}
+                  _last={{ borderBottom: "none" }}
+                >
+                  <Flex align="center" gap={3} mb="8px">
+                    <Box
+                      w="12px"
+                      h="12px"
+                      borderRadius="50%"
+                      bg={s.color}
+                      flexShrink={0}
+                    />
+                    <Text
+                      fontSize="14px"
+                      color={theme.textMuted}
+                      fontWeight="600"
+                      flex={1}
+                      isTruncated
+                    >
+                      {s.status_name}
+                    </Text>
+                    <Text fontSize="18px" fontWeight="800" color={theme.text}>
+                      {s.count}
+                    </Text>
+                    <Text fontSize="13px" fontWeight="500" color={theme.textMuted} minW="36px" textAlign="right">
+                      {pct}%
+                    </Text>
+                  </Flex>
+                  <Box
+                    bg={theme.trackBg}
+                    borderRadius="999px"
+                    h="8px"
+                    overflow="hidden"
+                    ml="24px"
+                  >
+                    <Box
+                      bg={s.color}
+                      h="100%"
+                      w={`${pct}%`}
+                      borderRadius="999px"
+                      transition="width 0.5s ease"
+                    />
+                  </Box>
+                </Box>
+              );
+            })}
+          </VStack>
+        </Flex>
+      ) : (
+        <Flex h="100px" align="center" justify="center">
+          <Text fontSize="14px" color={theme.textMuted}>
+            Ma'lumot yo'q
+          </Text>
+        </Flex>
+      )}
+    </>
+  );
+}
+
 export default function Dashboard() {
   const user = useAuthStore((s) => s.user);
 
@@ -264,10 +479,10 @@ export default function Dashboard() {
       bg={theme.bg}
       p={{ base: "16px", md: "28px" }}
     >
-      <Flex justify="space-between" align="center" mb="24px"></Flex>
+      <Flex justify="space-between" align="center" mb="24px" />
 
       <Grid
-        templateColumns={{ base: "1fr", lg: "1fr 380px" }}
+        templateColumns={{ base: "1fr", lg: "1fr 400px" }}
         gap={5}
         mb="24px"
         alignItems="stretch"
@@ -277,24 +492,18 @@ export default function Dashboard() {
             <StatCard
               label="Bugun"
               value={newLeads?.today}
-              accent={theme.accent}
-              icon="📅"
               loading={loadingCards}
               theme={theme}
             />
             <StatCard
               label="Bu hafta"
               value={newLeads?.this_week}
-              accent="#7B1FA2"
-              icon="📊"
               loading={loadingCards}
               theme={theme}
             />
             <StatCard
               label="Bu oy"
               value={newLeads?.this_month}
-              accent="#00838F"
-              icon="🗓️"
               loading={loadingCards}
               theme={theme}
             />
@@ -374,78 +583,12 @@ export default function Dashboard() {
           </Box>
         </Flex>
 
-        <Box
-          bg={theme.surface}
-          borderRadius="16px"
-          p="22px"
-          border="1px solid"
-          borderColor={theme.border}
-          minW={0}
-          display="flex"
-          flexDirection="column"
-        >
-          <Text fontSize="14px" fontWeight="700" color={theme.text} mb="18px">
-            Holat bo'yicha (bugun)
-          </Text>
-          {loadingCards ? (
-            <Flex flex={1} align="center" justify="center">
-              <Spinner color={theme.accent} />
-            </Flex>
-          ) : byDate?.by_status?.length ? (
-            <VStack spacing="14px" align="stretch">
-              {byDate.by_status.map((s, i) => {
-                const pct = byDate.total
-                  ? Math.round((s.count / byDate.total) * 100)
-                  : 0;
-                return (
-                  <Box key={i}>
-                    <Flex justify="space-between" mb="6px">
-                      <HStack spacing={2}>
-                        <Box
-                          w="8px"
-                          h="8px"
-                          borderRadius="50%"
-                          bg={s.color}
-                          flexShrink={0}
-                        />
-                        <Text
-                          fontSize="12px"
-                          fontWeight="600"
-                          color={theme.textMuted}
-                        >
-                          {s.status_name}
-                        </Text>
-                      </HStack>
-                      <Text fontSize="12px" fontWeight="700" color={theme.text}>
-                        {s.count}
-                      </Text>
-                    </Flex>
-                    <Box
-                      bg={theme.trackBg}
-                      borderRadius="999px"
-                      h="5px"
-                      overflow="hidden"
-                    >
-                      <Box
-                        bg={s.color}
-                        h="100%"
-                        w={`${pct}%`}
-                        borderRadius="999px"
-                        transition="width 0.5s ease"
-                      />
-                    </Box>
-                  </Box>
-                );
-              })}
-            </VStack>
-          ) : (
-            <Flex flex={1} align="center" justify="center">
-              <Text fontSize="13px" color={theme.textMuted}>
-                Ma'lumot yo'q
-              </Text>
-            </Flex>
-          )}
-        </Box>
+        <OrderStatusCard
+          data={byDate?.by_status}
+          total={byDate?.total}
+          loading={loadingCards}
+          theme={theme}
+        />
       </Grid>
 
       <Flex
@@ -458,7 +601,6 @@ export default function Dashboard() {
         <Text fontSize="16px" fontWeight="700" color={theme.text}>
           Holat bo'yicha taqsimot
         </Text>
-
         <Flex align="center" gap={3} flexWrap="wrap">
           <PeriodToggle
             active={period}
@@ -505,7 +647,6 @@ export default function Dashboard() {
             _focus={{ borderColor: theme.accent }}
             sx={{ colorScheme: "dark" }}
           />
-
           <HStack spacing={2}>
             <Text fontSize="12px" color={theme.textMuted} fontWeight="500">
               Jami:
@@ -524,63 +665,12 @@ export default function Dashboard() {
         border="1px solid"
         borderColor={theme.border}
       >
-        {loadingRange ? (
-          <Flex h="80px" align="center" justify="center">
-            <Spinner color={theme.accent} />
-          </Flex>
-        ) : byRange?.by_status?.length ? (
-          <Grid
-            templateColumns={{ base: "1fr 1fr", md: "repeat(4, 1fr)" }}
-            gap={4}
-          >
-            {byRange.by_status.map((s, i) => (
-              <Box
-                key={i}
-                borderRadius="12px"
-                p="16px"
-                bg={theme.bg}
-                border="1px solid"
-                borderColor={s.color + "55"}
-                transition="all 0.2s"
-                _hover={{ borderColor: s.color, transform: "translateY(-2px)" }}
-              >
-                <HStack spacing={2} mb={2}>
-                  <Box
-                    w="9px"
-                    h="9px"
-                    borderRadius="50%"
-                    bg={s.color}
-                    flexShrink={0}
-                  />
-                  <Text
-                    fontSize="10px"
-                    fontWeight="700"
-                    color={theme.textMuted}
-                    textTransform="uppercase"
-                    letterSpacing="0.08em"
-                    isTruncated
-                  >
-                    {s.status_name}
-                  </Text>
-                </HStack>
-                <Text
-                  fontSize="28px"
-                  fontWeight="800"
-                  color={theme.text}
-                  lineHeight="1"
-                >
-                  {s.count}
-                </Text>
-              </Box>
-            ))}
-          </Grid>
-        ) : (
-          <Flex h="80px" align="center" justify="center">
-            <Text fontSize="13px" color={theme.textMuted}>
-              Ma'lumot yo'q
-            </Text>
-          </Flex>
-        )}
+        <RangeStatusCard
+          data={byRange?.by_status}
+          total={byRange?.total}
+          loading={loadingRange}
+          theme={theme}
+        />
       </Box>
     </Box>
   );
